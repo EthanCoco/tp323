@@ -1,0 +1,187 @@
+<!--
+	作者：lijl
+	时间：2017-08-01
+	描述：用户管理
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="repwdtab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="panel">
+       	<div class="panel-content">
+       		<div class="panel-heading"> 查询条件</div>
+		    <div class="panel-body form-group" id="search-div" style="margin-bottom:0px;">
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_USERANME}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="username" />
+		        </div>
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_NAME}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="name" />
+		        </div>
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_IDCARD}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="idcard"/>
+		        </div>
+		        <div class="col-sm-3">
+		            <button class="btn btn-primary" title="{$Think.lang.HOME_COMMON_SEARCH}" id="repwdtab-search">
+		            	<span class="glyphicon glyphicon-search" aria-hidden="true" ></span>
+		            </button>
+		            <button class="btn btn-primary" title="{$Think.lang.HOME_COMMON_CLEAR}" id="repwdtab-clear">
+		            	<span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>
+		            </button>
+		        </div>
+		    </div>
+       		<table id="repwdtab-grid" class="table table-hover">
+				
+			</table>
+    	</div>
+	</div>  
+	<div id="repwdtab-bar" class="btn-group pull-right" style="margin-right: 20px;">
+     	<div class="dropdown" style="float: right;" title="切换用户类型">
+		    <button type="button" class="btn dropdown-toggle " id="btn_change_type" data-toggle="dropdown">
+		        <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+		    </button>
+		    <ul class="dropdown-menu" role="menu" aria-labelledby="btn_change_type">
+		        <li role="presentation">
+		            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="loadRepwdtab(2)">客户</a>
+		        </li>
+		        <li role="presentation">
+		            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="loadRepwdtab(1)">管理员</a>
+		        </li>
+		    </ul>
+	    </div>
+ 	</div>
+</div>
+
+<script>
+var __btnon = '<?php echo $btnon; ?>';	
+var __btnInfos = '<?php echo json_encode($btnInfos); ?>';
+__btnInfos = __btnInfos != "" ? JSON.parse(__btnInfos) : "";
+var __repwd_usertype = 2;
+$(function(){
+	//添加菜单名
+	$("#repwdtab").find("li i").addClass(levelFirstFa);
+	$("#repwdtab").find("li a").html(levelFirst);
+	
+	//初始化按钮
+	$('#repwdtab-search').bind('click',function(){loadRepwdtab(__repwd_usertype);}); 
+	$('#repwdtab-clear').bind('click',function(){
+		$("#search-div").find('input').each(function(){
+			$(this).val("");
+		});
+	});
+
+	loadRepwdtab(__repwd_usertype);
+});
+
+
+//加载用户列表
+function loadRepwdtab(usertype){
+	__repwd_usertype = usertype;
+	$('#repwdtab-grid').bootstrapTable("destroy");
+	$('#repwdtab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Repwdtab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        sortable: true,                     
+       	sortOrder:'ASC',
+	    sortName:'id',
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#repwdtab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    //cache:false,
+	    columns:[[    
+			{field:'id',title:'id',valign:'middle',align:'center',visible:false} ,
+			{field:'userimageurl',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_IMAGE}',valign:'middle',align:'center',formatter:function(value,row,index){return value=="" ? "<img width='50px' height='50px' alt='"+row.name+"' src='' />" : "<img width='50px' height='50px' alt='"+row.name+"' src='"+value+"' />"}},
+			{field:'username',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_USERANME}',valign:'middle',align:'center',sortable:true},
+			{field:'name',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_NAME}',valign:'middle',align:'center',sortable:true},
+			{field:'idcard',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_IDCARD}',valign:'middle',align:'center',sortable:true},
+			{field:'email',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_EMAIL}',valign:'middle',align:'center'},
+	        {field:'phone',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_PHONE}',valign:'middle',align:'center',sortable:true},
+	        {field:'addtime',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_ADDTIME}',valign:'middle',align:'center',sortable:true,formatter: function(value,row,index){return value=="" ? "" : transDate('Y-m-d H:i:s',value);}},
+	        {field:'add_ip',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_ADDIP}',valign:'middle',align:'center'},
+	        {field:'status',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_STATUS}',valign:'middle',align:'center',sortable:true,formatter: function(value,row,index){return value== "1" ? "{$Think.lang.HOME_COMMON_ENABLE}" : "{$Think.lang.HOME_COMMON_UNENABLE}"; }},
+	    	{field:'__operate__',title:'{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_OPERATE}',valign:'middle',align:'center',formatter:function(value,row,index){
+	    		var id = "'"+row.id+"'";
+	    		var name = "'"+row.name+"'";
+	    		var status = "'"+row.status+"'";
+	    		var _html = "";
+				if(__btnon == 1){
+					if(__btnInfos!=""){
+						if(__btnInfos.mod == 1){
+							_html+= '<a href="javascript:void(0);" title="{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_RESETPWD}" onclick="repwdReset('+id+','+name+','+status+')"><span class="glyphicon glyphicon-refresh"></span></a>';
+						}
+					}
+				}else{
+					_html =  '<a href="javascript:void(0);" title="{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_RESETPWD}" onclick="repwdReset('+id+','+name+','+status+')"><span class="glyphicon glyphicon-refresh"></span></a>';
+				}
+				return _html;
+	    	}}
+	    ]],
+  });
+//	.on('click-row.bs.table', function (e, row, element){
+//		$('.success').removeClass('success');//去除之前选中的行的，选中样式
+//		$(element).addClass('success');//添加当前选中的 success样式用于区别
+//		var index = $('#repwdtab-customer-grid').find('tr.success').data('index');//获得选中的行的id
+//	});
+}
+
+function queryParams(params){
+	var searchObj = {};
+	$("#search-div").find('input').each(function(){
+		if($(this).val().trim() != ""){
+			searchObj[$(this).attr("name")] = $(this).val().trim();
+		}
+	});
+    return{
+        page: params.limit,
+        //请求第几页
+        rows:params.offset,
+        order:params.order,
+        sort:params.sort,
+        data:searchObj,
+        usertype:__repwd_usertype,
+    }
+}
+
+//重置密码
+function repwdReset(id,name,status){
+	if(status == 0){
+		toastr.info("{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_MSG1}");
+		return;
+	}
+	Lwin.confirm({ message: "{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_MSG5}"+name+"{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_MSG6}",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Repwdtab/resetpwd')}",{"id":id},function(json){
+			if(json.result == "1"){
+				toastr.success("{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_MSG3}");
+				loadRepwdtab();
+			}else{
+				toastr.error("{$Think.lang.HOME_VIEW_MANAGE_REPWDTAB_MSG4}");
+			}
+		},'json');
+	});
+}
+</script>

@@ -1,0 +1,343 @@
+<!--
+	作者：lijl
+	时间：2017-09-06
+	描述：用户权限管理
+-->
+<link rel="stylesheet" href="__HOMESTYLE__/Manage/jstree/themes/default/style.min.css">
+<script src="__HOMESTYLE__/Manage/jstree/jstree.min.js"></script>
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="ljltab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="col-md-6 col-lg-6">
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl">
+            <table id="ljltab-grid" class="table table-hover">
+				
+			</table>
+        </div>
+    </div>
+    
+    
+    <div class="col-md-3 col-lg-3">
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl">
+            <div class="panel-content" style="height: 535px;">
+            	<input type="text" class="form-control input-style" id="ljlTreeSeacher" />
+                <div class="tree" id="ljlTree">
+                	
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<if condition="$btnon eq 1">
+					<noempty name="$btnInfos">
+							<if condition="$btnInfos['auth'] eq 1">
+				            	<button type="button" class="btn" style="margin-bottom: 0px;" id="ljlReset">重置</button>
+				                <button type="button" class="btn bg-success" id="ljlSave">授权组</button>
+				            </if>
+				   </noempty>
+				<else />
+					<button type="button" class="btn" style="margin-bottom: 0px;" id="ljlReset">重置</button>
+				    <button type="button" class="btn bg-success" id="ljlSave">授权组</button>
+				</if>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-lg-3">
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl">
+            <div class="panel-content" style="min-height: 535px;">
+            	<input type="text" class="form-control input-style" id="ljlTreeSeacher2" />
+                <div class="tree" id="ljlTree2">
+                	
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<if condition="$btnon eq 1">
+					<noempty name="$btnInfos">
+							<if condition="$btnInfos['auth'] eq 1">
+				            	<button type="button" class="btn" style="margin-bottom: 0px;" id="ljlReset2">重置</button>
+                				<button type="button" class="btn bg-success" id="ljlSave2">授权按钮</button>
+				            </if>
+				   </noempty>
+				<else />
+					<button type="button" class="btn" style="margin-bottom: 0px;" id="ljlReset2">重置</button>
+                	<button type="button" class="btn bg-success" id="ljlSave2">授权按钮</button>
+				</if>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+var __auth_uid__ = "";
+var __group_ids__ = "";
+$(function(){
+	//添加菜单名
+	$("#ljltab").find("li i").addClass(levelFirstFa);
+	$("#ljltab").find("li a").html(levelFirst);
+	
+	//确定按钮绑定
+	$("#ljlSave").bind("click",function(){
+		if(__auth_uid__ == "")
+			return;
+		var nodes = $("#ljlTree").jstree("get_checked");
+		var groupIDs = new Array();
+		var index = 0;
+		for(var i=0;i<nodes.length;i++){
+			var org = $("#ljlTree").jstree().get_node(nodes[i])["original"];
+			if(org["id"] != "0"){
+				groupIDs[index] = org['flag'];
+				index++;
+			}
+		}
+		
+		//alert(JSON.stringify(groupIDs));return;
+//		if(groupIDs == ""){
+//			toastr.warning("请选择需要授权的组！");
+//			return;
+//		}else{
+			new PNotify({
+		        title: '{$Think.lang.HOME_COMMON_TIPS}',
+		        text: '确定要授权保存么？',
+		        type: 'custom',
+		        icon: "fa fa-user",
+		        hide: false,
+		        cornerclass: 'pnotify-sharp',
+		        confirm: {
+		            confirm: true
+		        },
+		        buttons: {
+		            closer: false,
+		            sticker: false
+		        },
+		        history: {
+		            history: true
+		        },
+		        addclass: 'stack-modal pnotify-primary',
+		        stack: {'dir1': 'down', 'dir2': 'right', 'modal': true}
+		    }).get().on('pnotify.confirm', function () {
+		    		$.post("{:U('Authtab/saveAuth')}",{"data":groupIDs,"uid":__auth_uid__,'type':0},function(json){
+						if(json.result == "1"){
+							toastr.success("授权成功！");
+							if(__auth_uid__ == "")
+								return;
+							$('#ljltab-grid').bootstrapTable("refresh");
+						}
+					},'json');
+		        });
+//		}
+	});
+	
+	//确定按钮2绑定
+	$("#ljlSave2").bind("click",function(){
+		if(__auth_uid__ == "")
+			return;
+		var nodes = $("#ljlTree2").jstree("get_checked");
+		var btnIDs = new Array();
+		var index = 0;
+		for(var i=0;i<nodes.length;i++){
+			var org = $("#ljlTree2").jstree().get_node(nodes[i])["original"];
+			if(org["id"] == "btn_"+org['flag']){
+				btnIDs[index] = org['flag'];
+				index++;
+			}
+		}
+		
+		//alert(JSON.stringify(btnIDs));return;
+//		if(btnIDs == ""){
+//			toastr.warning("请选择需要授权的按钮！");
+//			return;
+//		}else{
+			new PNotify({
+		        title: '{$Think.lang.HOME_COMMON_TIPS}',
+		        text: '确定要授权按钮保存么？',
+		        type: 'custom',
+		        icon: "fa fa-user",
+		        hide: false,
+		        cornerclass: 'pnotify-sharp',
+		        confirm: {
+		            confirm: true
+		        },
+		        buttons: {
+		            closer: false,
+		            sticker: false
+		        },
+		        history: {
+		            history: true
+		        },
+		        addclass: 'stack-modal pnotify-primary',
+		        stack: {'dir1': 'down', 'dir2': 'right', 'modal': true}
+		    }).get().on('pnotify.confirm', function () {
+		    		$.post("{:U('Authtab/saveAuth')}",{"data":btnIDs,"uid":__auth_uid__,'type':1},function(json){
+						if(json.result == "1"){
+							toastr.success("授权成功！");
+							if(__auth_uid__ == "")
+								return;
+							$('#ljltab-grid').bootstrapTable("refresh");
+						}
+					},'json');
+		        });
+//		}
+	});
+	
+	//重置按钮绑定
+	$("#ljlReset").bind("click",function(){
+		if(__auth_uid__ == "")
+			return;
+		loadLjlTree(__auth_uid__);
+	});
+	//重置按钮2绑定
+	$("#ljlReset2").bind("click",function(){
+		if(__auth_uid__ == "")
+			return;
+		loadBtnAuthTree(__auth_uid__,__group_ids__);
+	});
+	//加载用户数据
+	loadLjltab();
+});
+
+function loadLjltab(){
+	$('#ljltab-grid').bootstrapTable("destroy");
+	$('#ljltab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Authtab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        sortable: true,                     
+       	sortOrder:'ASC',
+	    sortName:'id',
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#ljltab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'id',title:'id',valign:'middle',align:'center',visible:false} ,
+			{field:'username',title:'用户账号',valign:'middle',align:'center',sortable:true},
+	        {field:'name',title:'用户姓名',valign:'middle',align:'center',sortable:true},
+	        {field:'group',title:'用户所属组',valign:'middle',align:'center',sortable:true},
+	    	{field:'rulename',title:'用户拥有权限',valign:'middle',align:'left',sortable:true},
+	    ]],
+	    onLoadSuccess:function(data){
+	    	//添加默认选中的颜色
+	    	setTimeout(function () {
+				$('#ljltab-grid').find("tr[data-index=0]").addClass('success');
+			}, 250);
+			if(typeof data.rows[0] === "undefined"){
+				return;
+			}else{
+				__auth_uid__ = data.rows[0].id;
+				loadLjlTree(data.rows[0].id);
+			}
+			
+	    },
+	    onClickRow:function(row, e){
+	    	__auth_uid__ = row.id;
+	    	loadLjlTree(row.id);
+	    }
+    }).on('click-row.bs.table', function (e, row, element){
+		$('.success').removeClass('success');//去除之前选中的行的，选中样式
+		$(element).addClass('success');//添加当前选中的 success样式用于区别
+		var index = $('#usertab-grid').find('tr.success').data('index');//获得选中的行的id
+	});
+	
+}
+function queryParams(params){
+    return{
+        page: params.limit,
+        rows:params.offset,
+        order:params.order,
+        sort:params.sort,
+    }
+}
+
+//加载功能权限树
+function loadLjlTree(uid){
+	$.post("{:U('Authtab/authGroupTree')}",{'uid':uid},function(json){
+		//先销毁树
+		$('#ljlTree').jstree("destroy");
+		$('#ljlTree').on("loaded.jstree",function(e,data){
+			var checkId = json.userAuthGroup;
+			$("#ljlTree").find("li").each(function(){   
+	           	if(checkId instanceof Array){  
+	                for(var i=0;i<checkId.length;i++){  
+	                    if($(this).attr("id") == checkId[i]){  
+	                      $("#ljlTree").jstree("check_node",$(this));  
+	                    }  
+	                }  
+	            } 
+	     	});
+		}).jstree({
+			'core':{ 'data' : json.authGroupTree, "cache":false  },
+			plugins : ["checkbox","sort","types","wholerow","search"], 
+				"types" : { "file" : { "icon" : "fa fa-group" }}
+		});
+		
+		//绑定搜索
+		var to = false;
+		$('#ljlTreeSeacher').keyup(function (){
+		    if(to){ clearTimeout(to); }
+		    to = setTimeout(function () {
+		      var v = $('#ljlTreeSeacher').val();
+		      $('#ljlTree').jstree(true).search(v);
+		    }, 250);
+		});
+		__group_ids__ = json.userAuthGroup;
+		loadBtnAuthTree(uid,json.userAuthGroup);
+	},'json');
+}
+
+function loadBtnAuthTree(uid,groups){
+	$.post("{:U('Authtab/authBtnTree')}",{'uid':uid,'groupIDs':groups},function(json){
+		//先销毁树
+		$('#ljlTree2').jstree("destroy");
+		$('#ljlTree2').on("loaded.jstree",function(e,data){
+			var checkId = json.userAuthBtn;
+			$("#ljlTree2").find("li").each(function(){   
+	           	if(checkId instanceof Array){  
+	                for(var i=0;i<checkId.length;i++){  
+	                    if($(this).attr("id") == checkId[i]){  
+	                      $("#ljlTree2").jstree("check_node",$(this));  
+	                    }  
+	                }  
+	            } 
+	     	});
+		}).jstree({
+			'core':{ 'data' : json.authBtnTree, "cache":false  },
+			plugins : ["checkbox","sort","types","wholerow","search"], 
+				"types" : { "file" : { "icon" : "fa fa-file-o" }}
+		});
+		
+		//绑定搜索
+		var to = false;
+		$('#ljlTreeSeacher2').keyup(function (){
+		    if(to){ clearTimeout(to); }
+		    to = setTimeout(function () {
+		      var v = $('#ljlTreeSeacher2').val();
+		      $('#ljlTree2').jstree(true).search(v);
+		    }, 250);
+		});
+	},'json');
+}
+
+
+
+</script>

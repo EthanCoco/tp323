@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        /* deeper elements */
+        .su-toolbar{
+            height:35px;
+            display: block;
+            background: #fefefe;
+            padding: 5px;
+            border: solid 1px;
+            border-color: #cccccc;
+        }
+        .su-toolbar .tool-block{
+            cursor: pointer;
+            display: block;
+            width:35px;
+            height:35px;
+            text-align:center;
+            line-height:35px;
+            margin:0;
+            padding:0;
+            float:left;
+        }
+        .su-toolbar .tool-block *{
+            left:0;
+            top:0;
+        }
+        .su-toolbar .tool-block:hover{
+            background: #00ffff;
+        }
+        .su-toolbar button{
+            margin-top:5px;
+        }
+
+        .suEditor{
+            width:50%;
+            float:left;
+            display: block;
+
+        }
+        .suEditor textarea{
+            width:100%;
+            height: 100%;
+            background: #f5f5f5;
+            tab-size: 4;
+            border:solid 1px;
+            border-top: none;
+            border-color: #cccccc;
+            padding: 20px;
+            resize: none;
+        }
+        .suEditor textarea:focus{
+            background: #fff;
+            border-color:#cccccc ;
+            outline: none;
+        }
+        .suPreview{
+            width:50%;
+            left:50%;
+            float:left;
+            background: #f5f5f5;
+            height: 100%;
+            display: block;
+            overflow: auto;
+            padding: 0 20px;
+            border-right: solid 1px;
+            border-bottom: solid 1px;
+            border-color: #cccccc;
+
+        }
+        .suPreview h1{font-size:20px;}
+        .suPreview h2{font-size:18px;}
+        .suPreview h3{font-size:16px;}
+        .pull-right{float:right!important}
+        .pull-left{float:left!important}
+
+        .suProgress{
+            width: 60%;
+        }
+        .progress{
+            height:20px;margin-bottom:20px;overflow:hidden;background-color:#f5f5f5;border-radius:4px;
+            -webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.1);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)
+        }
+        .progress-bar{
+            float:left;width:0;height:100%;font-size:12px;line-height:20px;color:#fff;text-align:center;
+            background-color:#428bca;-webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+            box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);-webkit-transition:width .6s ease;
+            -o-transition:width .6s ease;transition:width .6s ease
+        }
+    </style>
+</head>
+
+<body>
+    <div class="suProgress progress">
+        <div class="progress-bar su-progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+            0%
+        </div>
+    </div>
+
+    <div class="su-toolbar">
+        <div class="tool-block su-tool-bold" title="加粗" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-bold"></span>
+        </div>
+        <div class="tool-block su-tool-italic" title="斜体" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-italic"></span>
+        </div>
+        <div class="tool-block su-tool-head" title="大标题" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-header"></span>
+        </div>
+        <div class="tool-block su-tool-xhead" title="小标题" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-header"></span>
+        </div>
+        <!-- <div class="tool-block su-tool-link" title="链接(Ctrl+L)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-link"></span>
+        </div>
+        <div class="tool-block su-tool-img" title="图片(Ctrl+G)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-picture"></span>
+        </div>
+        <div class="tool-block su-tool-list" title="无序列表(Ctrl+U)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-list"></span>
+        </div>
+        <div class="tool-block su-tool-orderlist" title="有序列表(Ctrl+O)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-th-list"></span>
+        </div>
+        <div class="tool-block su-tool-code" title="单行代码(Ctrl+K)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-asterisk"></span>
+        </div>
+        <div class="tool-block su-tool-quote" title="引用(Ctrl+Q)" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-comment"></span>
+        </div> -->
+
+
+        <div class="tool-block su-tool-plus" title="文件上传" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-upload"></span>
+        </div>
+        <input type="file" style="display: none" class="su-tool-upload" multiple="">
+
+        <!-- <a class="tool-block su-tool-help" href="http://lab.lepture.com/editor/markdown" title="帮助" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-info-sign"></span>
+        </a>
+
+        <div class="tool-block pull-right su-tool-fullscreen" title="全屏" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-fullscreen"></span>
+        </div>
+
+        <div class="tool-block pull-right su-tool-preview" title="预览" data-placement="top" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-eye-open"></span>
+        </div> -->
+    </div>
+
+    <div class="suEditor">
+
+        <textarea></textarea>
+
+    </div>
+    <div class="suPreview">
+
+    </div>
+</body>
+</html>

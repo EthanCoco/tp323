@@ -1,0 +1,407 @@
+<!--
+	作者：lijl
+	时间：2017-07-31
+	描述：用户管理
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="usertab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="panel">
+       	<div class="panel-content">
+       		<div class="panel-heading"> 查询条件</div>
+		    <div class="panel-body form-group" id="search-div" style="margin-bottom:0px;">
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_USERANME}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="username" />
+		        </div>
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_NAME}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="name" />
+		        </div>
+		        <label class="col-sm-1 control-label" style="text-align: right; margin-top:5px">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IDCARD}</label>
+		        <div class="col-sm-2">
+		            <input type="text" class="form-control" name="idcard"/>
+		        </div>
+		        <div class="col-sm-3">
+		            <button class="btn btn-primary" title="{$Think.lang.HOME_COMMON_SEARCH}" id="usertab-search">
+		            	<span class="glyphicon glyphicon-search" aria-hidden="true" ></span>
+		            </button>
+		            <button class="btn btn-primary" title="{$Think.lang.HOME_COMMON_CLEAR}" id="usertab-clear">
+		            	<span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>
+		            </button>
+		        </div>
+		    </div>
+       		<table id="usertab-grid" class="table table-hover">
+       			
+       		</table>
+    	</div>
+    </div>
+    
+    <div id="usertab-bar" class="btn-group pull-right" style="margin-right: 20px;">
+   		<if condition="$btnon eq 1">
+    		<noempty name="$btnInfos">
+    			<if condition="$btnInfos['add'] eq 1">
+    				<button id="btn_add" type="button" title="{$Think.lang.HOME_COMMON_ADD}" class="btn btn-default">
+			         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+			     	</button>
+    			</if>
+    			<if condition="$btnInfos['export'] eq 1">
+    				<div class="dropdown" style="float: right;" title="{$Think.lang.HOME_COMMON_EXPORT}">
+					    <button type="button" class="btn dropdown-toggle " id="btn_export" data-toggle="dropdown">
+					        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+					    </button>
+					    <ul class="dropdown-menu" role="menu" aria-labelledby="btn_export">
+					        <li role="presentation">
+					            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="exportlist(1)">{$Think.lang.HOME_COMMON_EXPORTCURRENT}</a>
+					        </li>
+					        <li role="presentation">
+					            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="exportlist(2)">{$Think.lang.HOME_COMMON_EXPORTALL}</a>
+					        </li>
+					    </ul>
+				    </div>
+    			</if>
+    			<if condition="$btnInfos['status'] eq 1">
+    				<div class="dropdown" style="float: right;" title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_CHANGESTATUS}">
+					    <button type="button" class="btn dropdown-toggle" id="btn_change" data-toggle="dropdown">
+					        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+					    </button>
+					    <ul class="dropdown-menu" role="menu" aria-labelledby="btn_change" >
+					        <li role="presentation">
+					            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="changeStatus(0)">{$Think.lang.HOME_COMMON_UNENABLE}</a>
+					        </li>
+					        <li role="presentation">
+					            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="changeStatus(1)">{$Think.lang.HOME_COMMON_ENABLE}</a>
+					        </li>
+					    </ul>
+				    </div>
+    			</if>
+    		</noempty>
+    		
+    	<else />
+    	
+    		<button id="btn_add" type="button" class="btn btn-default" title="{$Think.lang.HOME_COMMON_ADD}">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+	     	
+	     	<div class="dropdown" style="float: right;" title="{$Think.lang.HOME_COMMON_EXPORT}">
+			    <button type="button" class="btn dropdown-toggle " id="btn_export" data-toggle="dropdown">
+			        <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+			    </button>
+			    <ul class="dropdown-menu" role="menu" aria-labelledby="btn_export">
+			        <li role="presentation">
+			            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="exportlist(1)">{$Think.lang.HOME_COMMON_EXPORTCURRENT}</a>
+			        </li>
+			        <li role="presentation">
+			            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="exportlist(2)">{$Think.lang.HOME_COMMON_EXPORTALL}</a>
+			        </li>
+			    </ul>
+		    </div>
+		    
+		    <div class="dropdown" style="float: right;" title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_CHANGESTATUS}">
+			    <button type="button" class="btn dropdown-toggle" id="btn_change" data-toggle="dropdown">
+			        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+			    </button>
+			    <ul class="dropdown-menu" role="menu" aria-labelledby="btn_change" >
+			        <li role="presentation">
+			            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="changeStatus(0)">{$Think.lang.HOME_COMMON_UNENABLE}</a>
+			        </li>
+			        <li role="presentation">
+			            <a role="menuitem" tabindex="-1" href="javascript:;" onclick="changeStatus(1)">{$Think.lang.HOME_COMMON_ENABLE}</a>
+			        </li>
+			    </ul>
+		    </div>
+		    
+    	</if>
+    	
+ 	</div>
+</div>
+
+<!--导出excel-->
+<div style="display: none;">
+	<form id="exportUsertabExcel" action="{:U('Usertab/export')}" method="post">
+	    <input name="type" />
+	    <input name="pageInfo"/>
+	</form>
+</div>
+
+
+<!--添加用户 -->
+<div class="modal fade" id="usertab-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_ADDUSER}</h4>
+            </div>
+            <div class="modal-body">
+            	
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="usertabadd-form" class="form-horizontal form-stripe">
+                            <div class="form-group">
+                                <label for="username" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_USERANME}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_USERANME}" type="text" class="form-control" id="username" name="username" r=1 req=1 validate="validateUcount" ren=1 renf="validateRename" reqt="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG1}" reqc="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG2}"   required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_NAME}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_NAME}" type="text" class="form-control" id="name" name="name" r=1 required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="idcard" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IDCARD}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IDCARD}" type="text" class="form-control" id="idcard" name="idcard" r=1 req=1 validate="validateIdcard" reqt="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG3}" reqc="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG4}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_EMAIL}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_EMAIL}" type="text" class="form-control" id="email" name="email" r=1 req=1 validate="validateEmail" reqt="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG5}" reqc="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG6}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_PHONE}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_PHONE}" type="text" class="form-control" id="phone" name="phone" r=1 req=1 validate="validatePhone" reqt="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG7}" reqc="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG8}" required >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="charspwd" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_PWDENCRY}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_PWDENCRY}" type="text" class="form-control" id="charspwd" name="charspwd" r=1 required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+						        <label for="userimageurl" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IMAGE}</label>
+						        <div class="col-sm-6 tl th">
+						            <input title="{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IMAGE}" id="userimageurl" type="file" name="userimageurl" image=1 class="projectfile" >
+						            <p class="help-block">{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG9}</p>
+						        </div>
+						    </div>  
+                            
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="saveUsertab()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//导出excel条件信息
+var __usertabPageInfo;
+//用户ID
+var __usertab_id = "";
+//用户状态
+var __usertab_status = "";
+//用户信息
+var __usertab_rowData = {};
+
+$(function(){
+	//添加菜单名
+	$("#usertab").find("li i").addClass(levelFirstFa);
+	$("#usertab").find("li a").html(levelFirst);
+	//初始化按钮
+	$('#usertab-search').bind('click',function(){loadUsertab();}); 
+	$('#usertab-clear').bind('click',function(){
+		$("#search-div").find('input').each(function(){
+			$(this).val("");
+		});
+	});
+	$("#btn_add").bind('click',function(){
+		$('#usertab-add').modal('show');
+		$("#usertabadd-form").form("clear");
+		imageUpload('userimageurl');
+	});
+	
+	//初始化onblur事件
+	initBlurValidate("usertabadd-form");
+	
+	//加载用户列表
+	loadUsertab();
+});
+
+//保存用户
+function saveUsertab(){
+	//校验字段完整性
+	if(!validateForm("usertabadd-form")){
+		return;
+	}
+	
+	//获取表单字段信息
+	var info = getFormData("usertabadd-form");
+	//alert(JSON.stringify(info));
+	//提示动作
+	var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+	new PNotify({
+        title: '{$Think.lang.HOME_COMMON_TIPS}',
+        text: '{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MGSSAVE}',
+        type: 'custom',
+        icon: "fa fa-user",
+        hide: false,
+        cornerclass: 'pnotify-sharp',
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: true
+        },
+        addclass: 'stack-modal pnotify-primary',
+        stack: stack_modal
+    }).get().on('pnotify.confirm', function () {
+    		saveUsertab_sure(info);
+        });
+}
+
+//保存动作
+function saveUsertab_sure(info){
+	//alert(JSON.stringify(info));return;
+	$.ajax({
+		type:"post",
+		url:"{:U('Usertab/addinfo')}",
+		async:true,
+		dataType:"json",
+		data:{data:info},
+		success:function(json){
+			if(json["result"] == "1"){
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEOK}");
+				$('#usertab-add').modal('hide');
+				//loadUsertab();
+				$('#usertab-grid').bootstrapTable("refresh");
+			}else{
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEERROR}")
+			}
+		}
+	});
+}
+
+//加载用户列表
+function loadUsertab(){
+//	var searchObj = {};
+//	$("#search-div").find('input').each(function(){
+//		if($(this).val().trim() != ""){
+//			searchObj[$(this).attr("name")] = $(this).val().trim();
+//		}
+//	});
+	//alert(JSON.stringify(searchObj));
+	$('#usertab-grid').bootstrapTable("destroy");
+	$('#usertab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Usertab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        sortable: true,                     
+       	sortOrder:'ASC',
+	    sortName:'id',
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#usertab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    //cache:false,
+        columns:[[    
+			{field:'id',title:'id',align:'center',visible:false} ,
+			{field:'userimageurl',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IMAGE}',align:'center',valign:'middle',formatter:function(value,row,index){return value=="" ? "<img width='50px' height='50px' alt='"+row.name+"' src='' />" : "<img width='50px' height='50px' alt='"+row.name+"' src='"+value+"' />"}},
+			{field:'username',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_USERANME}',align:'center',valign:'middle',sortable:true},
+			{field:'name',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_NAME}',align:'center',valign:'middle',sortable:true},
+			{field:'idcard',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_IDCARD}',align:'center',valign:'middle',sortable:true},
+			{field:'email',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_EMAIL}',align:'center',valign:'middle'},
+	        {field:'phone',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_PHONE}',align:'center',valign:'middle',sortable:true},
+	        {field:'addtime',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_ADDTIME}',align:'center',valign:'middle',sortable:true,formatter: function(value,row,index){return value=="" ? "" : transDate('Y-m-d H:i:s',value);}},
+	        {field:'add_ip',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_ADDIP}',align:'center',valign:'middle'},
+	        {field:'status',title:'{$Think.lang.HOME_VIEW_MANAGE_USERTAB_STATUS}',align:'center',valign:'middle',sortable:true,formatter: function(value,row,index){return value== "1" ? "{$Think.lang.HOME_COMMON_ENABLE}" : "{$Think.lang.HOME_COMMON_UNENABLE}"; }}
+	    ]],
+	    onLoadSuccess:function(data){
+	    	__usertabPageInfo = data.pageInfo;
+	    },
+	    onClickRow:function(row, e){
+	    	__usertab_id = row.id;
+	    	__usertab_status = row.status;
+	    	__usertab_rowData = row;
+	    }
+   }).on('click-row.bs.table', function (e, row, element){
+		$('.success').removeClass('success');//去除之前选中的行的，选中样式
+		$(element).addClass('success');//添加当前选中的 success样式用于区别
+		var index = $('#usertab-grid').find('tr.success').data('index');//获得选中的行的id
+	});
+}
+
+function queryParams(params){
+	var searchObj = {};
+	$("#search-div").find('input').each(function(){
+		if($(this).val().trim() != ""){
+			searchObj[$(this).attr("name")] = $(this).val().trim();
+		}
+	});
+    return{
+        page: params.limit,
+        //请求第几页
+        rows:params.offset,
+        order:params.order,
+        sort:params.sort,
+        data:searchObj,
+    }
+}
+
+
+//导出excel
+function exportlist(type){
+	$("input[name=type]").val(type);
+	$("input[name=pageInfo]").val(JSON.stringify(__usertabPageInfo));
+	$("#exportUsertabExcel").submit();
+}
+
+//修改用户状态
+function changeStatus(status){
+	var msg = ['{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG11}','{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG12}'];
+	if(__usertab_id == ""){
+		toastr.warning("{$Think.lang.HOME_VIEW_MANAGE_USERTAB_MSG10}");return;
+	}
+	
+	if(__usertab_status == status){
+		toastr.warning(msg[status]);return;
+	}
+	
+	$.post("{:U('Usertab/changestatus')}",{'id':__usertab_id,'status': status },function(json){
+		if(json["result"] == "1"){
+			//loadUsertab();
+			$('#usertab-grid').bootstrapTable("refresh");
+			toastr.success('{$Think.lang.HOME_COMMON_OPRATEROK}');
+			
+		}else{
+			toastr.info('{$Think.lang.HOME_COMMON_OPRATERERROR}');
+		}
+	},'json');
+}
+</script>

@@ -1,0 +1,130 @@
+<!--
+	作者：lijl
+	时间：2017-07-31
+	描述：头部信息
+-->
+<div class="page-header">
+        <div class="leftside-header">
+            <div class="logo">
+                <a href="#" class="on-click">
+                    <img alt="logo" src="__HOMESTYLE__/Images/logo1.png" />
+                </a>
+            </div>
+            <div id="menu-toggle" class="visible-xs toggle-left-sidebar" data-toggle-class="left-sidebar-open" data-target="html">
+                <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+            </div>
+        </div>
+        <div class="rightside-header">
+            <div class="header-middle"></div>
+            <!--<div class="header-section" id="search-headerbox">
+                <input type="text" name="search" id="search" placeholder="Search...">
+                <i class="fa fa-search search" id="search-icon" aria-hidden="true"></i>
+                <div class="header-separator"></div>
+            </div>-->
+            <div class="header-section hidden-xs" id="notice-headerbox">
+                <div class="notice" id="alerts-notice">
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    <div class="dropdown-box basic">
+                        <div class="drop-header">
+                            <h3><i class="fa fa-chevron-down" aria-hidden="true"></i>{$Think.lang.HOME_VIEW_INDEX_HEADER_TRANLANG}</h3>
+                        </div>
+                        <div class="drop-content">
+                            <div class="widget-list list-left-element list-sm">
+                                <ul>
+                                    <li>
+                                        <a href="#">
+                                            <!--<div class="left-element"><i class="fa fa-flag color-danger"></i></div>-->
+                                            <div class="text">
+                                                <span class="title"><a href="?l=zh-cn">简体中文</a></span>
+                                                <!--<span class="subtitle">sevidor C down</span>-->
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <!--<div class="left-element"><i class="fa fa-cog color-dark"></i></div>-->
+                                            <div class="text">
+                                                <span class="title"><a href="?l=en-us">English</a></span>
+                                                <!--<span class="subtitle"></span>-->
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-separator"></div>
+                
+            </div>
+            
+            <div class="header-section" id="user-headerbox">
+                <div class="user-header-wrap">
+                    <div class="user-photo">
+                        <img src="<?php echo session(C('USERIMAGEURL')); ?>" alt="<?php echo session(C('USERREALNAME')); ?>" />
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name"><?php echo session(C('USERREALNAME')); ?></span>
+                        <span class="user-profile"><?php echo session(C('USERNAME')); ?></span>
+                    </div>
+                    <i class="fa fa-plus icon-open" aria-hidden="true"></i>
+                    <i class="fa fa-minus icon-close" aria-hidden="true"></i>
+                </div>
+                <div class="user-options dropdown-box">
+                    <div class="drop-content basic">
+                        <ul>
+                            <li> <a href="javascript:void(0);" onclick="loadProfile(1)"><i class="fa fa-user" aria-hidden="true"></i>{$Think.lang.HOME_VIEW_INDEX_HEADER_PERSONAL}</a></li>
+                            <li> <a href="{:U('Login/lockscreen')}"><i class="fa fa-lock" aria-hidden="true"></i>{$Think.lang.HOME_VIEW_INDEX_HEADER_LOCKSCREEN}</a></li>
+                            <li><a href="{:U('Login/modifypwd')}"><i class="fa fa-key" aria-hidden="true"></i>{$Think.lang.HOME_VIEW_INDEX_HEADER_MODIFYPWD}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="header-separator"></div>
+            <div class="header-section">
+                <!--<a href="javascript:void(0);" onclick="logout()"><i class="fa fa-sign-out log-out" aria-hidden="true"></i></a>-->
+                <button id="pnotify-modal-primary" class="btn btn-small btn-primary"><i class="fa fa-sign-out log-out" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <script>
+    	$(function(){
+    		var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+		    $('#pnotify-modal-primary').on('click',function () {
+		        new PNotify({
+		            title: '{$Think.lang.HOME_COMMON_TIPS}',
+		            text: '{$Think.lang.HOME_VIEW_INDEX_HEADER_MSG1}',
+		            type: 'custom',
+		            icon: "fa fa-user",
+		            hide: false,
+		            cornerclass: 'pnotify-sharp',
+		            confirm: {
+		                confirm: true
+		            },
+		            buttons: {
+		                closer: false,
+		                sticker: false
+		            },
+		            history: {
+		                history: true
+		            },
+		            addclass: 'stack-modal pnotify-primary',
+		            stack: stack_modal
+		        }).get().on('pnotify.confirm', function () {
+		                window.location = constLJL.logoutRul;
+		            });
+		    });
+    	});
+    	
+    	//加载个人信息到主页面
+    	function loadProfile(type){
+    		$("#syscontent").empty("");
+    		if(type == 1){
+    			$("#syscontent").load("{:U('Manage/profile')}");
+    		}else if(type == 2){
+    			$("#syscontent").load("{:U('Manage/feedback')}");
+    		}
+			
+    	}
+    </script>

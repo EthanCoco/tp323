@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" class="fixed">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{$Think.lang.HOME_VIEW_LOGIN_LOGIN_TITLE}</title>
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <!--<link rel="icon" type="image/png" sizes="192x192" href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">-->
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/magnific-popup/magnific-popup.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/pnotify/<?php echo LANG_SET; ?>/pnotify.custom.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/stylesheets/css/style.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Css/share.css">
+    
+    
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/themes/color.css">
+    
+    <script src="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/jquery.min.js"></script>
+    <!--<script src="__HOMESTYLE__/Manage/javascripts/jquery.min.js"></script>-->
+	<script src="__HOMESTYLE__/Manage/vendor/bootstrap/js/bootstrap.min.js"></script>
+	
+	<script src="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/jquery.easyui.min.js"></script>
+	<script src="__HOMESTYLE__/Manage/jquery-easyui-1.5.2/locale/<?php echo LANG_SET; ?>.js"></script>
+	
+	<!--fileinput-->
+	<link rel="stylesheet" href="__HOMESTYLE__/Manage/fileinput/css/fileinput.min.css">
+	<script src="__HOMESTYLE__/Manage/fileinput/fileinput.js"></script>
+	<script src="__HOMESTYLE__/Manage/fileinput/locales/zh.js"></script>
+	
+	<!--watable-->
+	<!--<link rel="stylesheet" href="__HOMESTYLE__/Manage/watable/watable.css">
+	<script src="__HOMESTYLE__/Manage/watable/jquery.watable.js"></script>-->
+	
+		
+	<!--bootstrap-table-->
+	<link rel="stylesheet" href="__HOMESTYLE__/Manage/bootstrap-table/bootstrap-table.min.css">
+	<script src="__HOMESTYLE__/Manage/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="__HOMESTYLE__/Manage/bootstrap-table/locale/bootstrap-table-<?php echo LANG_SET; ?>.min.js"></script>
+	
+</head>
+
+<body>
+<div class="wrap">
+	<!--
+    	作者：offline
+    	时间：2017-07-24
+    	描述：头部信息
+    -->
+    <?php if (session(C('USERTYPE')) == 0){ ?>
+    	<include file="Home@Index:header_admin"/>
+    <?php }else{ ?>
+    	<include file="Home@Index:header"/>
+    <?php } ?>
+    <div class="page-body">
+    	<!--
+        	作者：offline
+        	时间：2017-07-24
+        	描述：左侧菜单信息
+        -->
+        <include file="Home@Index:left"/>
+        <!--
+        	作者：offline
+        	时间：2017-07-24
+        	描述：继承模板中间块
+        -->
+        <!--<block name="maincontent"></block>-->
+        <!--
+        	作者：offline
+        	时间：2017-07-31
+        	描述：首页 可替换
+        -->
+        <div class="content" id="syscontent">
+        	<div class="content-header">
+		    	<div class="leftside-content-header">
+			        <ul class="breadcrumbs">
+			            <li><i class="fa fa-home" aria-hidden="true"></i><a href="#">{$Think.lang.HOME_VIEW_INDEX_LEFT_HOMEPAGE}</a></li>
+			        </ul>
+			    </div>
+			</div>
+        </div>
+        <!--
+        	作者：offline
+        	时间：2017-07-24
+        	描述：右侧设置信息
+        -->
+        <include file="Home@Index:right"/>
+    </div>
+    <div id="modalcontent"></div>
+</div>
+<script src="__HOMESTYLE__/Manage/vendor/pnotify/<?php echo LANG_SET; ?>/pnotify.custom.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/nano-scroller/nano-scroller.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-script.min.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-init.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.js"></script>
+<!--<script src="__HOMESTYLE__/Manage/vendor/chart-js/chart.min.js"></script>-->
+<script src="__HOMESTYLE__/Manage/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!--<script src="__HOMESTYLE__/Manage/javascripts/examples/dashboard.js"></script>-->
+<script src="__HOMESTYLE__/Manage/javascripts/examples/ui-elements/notifications-pnotify.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/bootstrap_max-lenght/bootstrap-maxlength.js"></script>
+<script src="__HOMESTYLE__/Manage/Jquery/lijl.confirm.js"></script>
+<script src="__HOMESTYLE__/Manage/Share/share.js"></script>
+<script>
+	//var __FUNCODEINFOS__ = <php echo json_encode($authInfo); >;
+	var __USERTYPE__ = "<?php echo session(C('USERTYPE')); ?>";
+	//alert(__FUNCODEINFOS__);
+	//一级菜单名
+	var levelFirst = "";
+	//二级菜单名
+	var levelFirstFa = "";
+	//静态路由地址
+	var constLJL = {
+		"logoutRul":"{:U('Login/logout')}",
+		"UsertabRenameUrl":"{:U('Usertab/rename')}",
+		"ImageUpload":"{:U('Sharefun/upload')}",
+	}
+	//语言切换相关提示
+	var __lang = '<?php echo LANG_SET; ?>';
+	var __tips = __lang == "zh-cn" ? "提示" : "Tips";
+	var __rename = __lang =="zh-cn" ? "已经存在！" : " already exists!";
+	
+	toastr.options = {
+	    "progressBar": true,
+	    "positionClass": "toast-bottom-right",
+	    "timeOut": 3500,
+	    "showEasing": "swing",
+	    "hideEasing": "linear",
+	    "showMethod": "slideDown",
+	    "hideMethod": "fadeOut"
+    };
+	if(__lang == "zh-cn"){
+	    toastr.info('欢迎您!', '<h5 style="margin-top: 0px; margin-bottom: 5px;"><b>****科技有限公司</b></h5>');	
+	}else{
+		toastr.info('Welcome ！', '<h5 style="margin-top: 0px; margin-bottom: 5px;"><b>****Technology</b></h5>');
+	}
+	
+	//加载到主页面
+	function loadcontent(th){
+		//var fcode = $(th).attr('fcode');
+//		if(__USERTYPE__ == "0"){
+//			$("#main-nav").find("li").removeClass('active-item');//删除默认选中的样式
+//			$(th).parent().addClass('active-item');
+//			levelFirstFa = $(th).attr("faicon");
+//			levelFirst = $(th).attr("fnname");
+//			//$("#syscontent").empty("");
+//			$("#syscontent").load(th.name);
+//		}else{
+			//if($.inArray(fcode, __FUNCODEINFOS__)){
+				$("#main-nav").find("li").removeClass('active-item');//删除默认选中的样式
+				$(th).parent().addClass('active-item');
+				levelFirstFa = $(th).attr("faicon");
+				levelFirst = $(th).attr("fnname");
+				//$("#syscontent").empty("");
+				$("#syscontent").load(th.name);
+//			}else{
+//				$("#main-nav").find("li").removeClass('active-item');//删除默认选中的样式
+//				$(th).parent().addClass('active-item');
+//				levelFirst = $(th).attr("fnname");
+//				$("#syscontent").load("{:U('Manage/noauth')}");
+//			}
+//		}
+	}
+</script>
+</body>
+</html>

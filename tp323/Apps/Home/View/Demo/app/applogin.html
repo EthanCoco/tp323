@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="fixed accounts sign-in"  lang="zh-cn">
+<head>
+	<title>{$Think.lang.HOME_VIEW_LOGIN_LOGIN_TITLE}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Free HTML5 Template by FREEHTML5" />
+	<meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
+	<link rel="shortcut icon" href="favicon.ico">
+	<script src="__HOMESTYLE__/Manage/Jquery/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<h3>手机登录页面</h3>
+<input type="text" name="phone" id="phone"  /><br/>
+<input type="text" name="yzm" id="yzm"  /> <button id="getcodeyzm">获取验证码<b id="waitapptime"><?php echo $waitTime; ?></b></button><br/>
+<button id="applogin">登录</button><br/>
+
+
+
+<script type="text/javascript">
+$(function(){
+	$("#getcodeyzm").bind('click',function(){
+		var phone = $("#phone").val().trim();
+		if(phone == "") {
+			alert("手机号码不能为空");
+			return;
+		}
+		$.ajax({
+			type:'post',
+			url:"{:U('Demo/appyzm')}",
+			dataType:'json',
+			data:{"phone":phone},
+			success:function(json){
+				if(json.result == 1){
+					$("#waitapptime").html(json.wtime);
+					$("#getcodeyzm").attr("disabled","disabled");
+					setTime();
+				}
+			}
+		});
+		
+	});
+	
+	$("#applogin").bind('click',function(){
+		var phone = $("#phone").val().trim();
+		if(phone == "") {
+			alert("手机号码不能为空");
+			return;
+		}
+		var yzm = $("#yzm").val().trim();
+		if(yzm == ""){
+			alert("验证码不能为空");
+			return;
+		}
+		$.ajax({
+			type:'post',
+			url:"{:U('Demo/applogindone')}",
+			dataType:'json',
+			data:{"phone":phone,'yzm':yzm},
+			success:function(json){
+				if(json.result == "1"){
+					alert("登录成功");
+				}else if(json.result == "2"){
+					alert("验证码已过期，请重新发送");
+				}else{
+					alert("验证码不匹配");
+				}
+			}
+		});
+	});
+});
+	
+
+
+function setTime(){
+	var wait = document.getElementById('waitapptime');
+	var interval = setInterval(function(){
+		if(wait.innerHTML == ""){
+			clearInterval(interval);
+		}else{
+			var time = --wait.innerHTML;
+			if(time <= 0) {
+				$("#waitapptime").html("");
+				$("#getcodeyzm").removeAttr("disabled");
+				clearInterval(interval);
+			};
+		}
+		
+	}, 1000);
+}
+
+
+</script>
+</body>
+</html>

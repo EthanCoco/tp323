@@ -1,0 +1,325 @@
+<!--
+	作者：lijl
+	时间：2017-09-05
+	描述：用户组管理
+-->
+<link rel="stylesheet" href="__HOMESTYLE__/Manage/jstree/themes/default/style.min.css">
+<script src="__HOMESTYLE__/Manage/jstree/jstree.min.js"></script>
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="grouptab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="panel">
+   		<table id="grouptab-grid" class="table table-hover">
+			
+		</table>
+	</div> 
+	<div id="grouptab-bar" class="btn-group pull-right" style="margin-right: 20px;" title="{$Think.lang.HOME_COMMON_ADD}">
+		<if condition="$btnon eq 1">
+			<noempty name="$btnInfos">
+					<if condition="$btnInfos['add'] eq 1">
+					    <button id="grouptab_btn_add" type="button" class="btn btn-default">
+				         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+				     	</button>
+				    </if>
+		   </noempty>
+		<else />
+			<button id="grouptab_btn_add" type="button" class="btn btn-default">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+		</if>
+	</div>
+</div>
+
+<!--添加用户组 -->
+<div class="modal fade" id="grouptab-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">添加用户组</h4>
+            </div>
+            <div class="modal-body">
+            	
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="grouptab-form" class="form-horizontal form-stripe">
+                            <div class="form-group">
+                                <label for="title" class="col-sm-3 control-label">组名<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="组名" type="text" class="form-control" id="title" name="title" r=1 required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+	                            <label for="" class="col-sm-3 control-label">状态<span class="required">*</span></label>
+	                            <div class="col-sm-6">
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="启用" type="radio" id="status0" name="status" value="1">
+	                                    <label for="status0">启用</label>
+	                                </div>
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="停用" type="radio" id="status1" name="status" value="0">
+	                                    <label for="status1">停用</label>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="form-group">
+	                        	<label class="col-sm-3 control-label">路由&nbsp;&nbsp;</label>
+	                        	<div class="col-sm-6">
+		                            <input type="text" class="form-control input-style" id="ruleTreeSeacher" />
+					                <div class="tree" id="ruleTree">
+					                	
+					                </div>
+	                        	</div>
+	                        </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="saveGrouptab()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var __btnon = '<?php echo $btnon; ?>';	
+var __btnInfos = '<?php echo json_encode($btnInfos); ?>';
+__btnInfos = __btnInfos != "" ? JSON.parse(__btnInfos) : "";
+var __editing_groupid__ = "";
+$(function(){
+	//添加菜单名
+	$("#grouptab").find("li i").addClass(levelFirstFa);
+	$("#grouptab").find("li a").html(levelFirst);
+	
+	$("#grouptab_btn_add").bind('click',function(){
+		$('#grouptab-add').modal('show');
+		$("#grouptab-form").form("clear");
+		$("#status0").prop("checked",true);
+		loadRuleTree(0,0);
+	});
+	//加载用户组列表
+	loadRuletab();
+});
+
+//加载用户列表
+function loadRuletab(){
+	$('#grouptab-grid').bootstrapTable("destroy");
+	$('#grouptab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Grouptab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        sortable: true,                     
+       	sortOrder:'ASC',
+	    sortName:'id',
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#grouptab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'id',title:'id',valign:'middle',align:'center',visible:false} ,
+			{field:'title',title:'组名',valign:'middle',align:'center',sortable:true},
+	        {field:'status',title:'状态',valign:'middle',align:'center',sortable:true,formatter: function(value,row,index){return value== "1" ? "{$Think.lang.HOME_COMMON_ENABLE}" : "{$Think.lang.HOME_COMMON_UNENABLE}"; }},
+	    	{field:'rules',title:'规则',valign:'middle',align:'left',sortable:true,width:500},
+	    	{field:'operation',title:'操作',valign:'middle',align:'center',sortable:false,
+	    		formatter: function(value,row,index){
+    				if(row.status == 1){
+    					var _html = "";
+    					if(__btnon == 1){
+    						if(__btnInfos!=""){
+    							if(__btnInfos.status == 1){
+    								_html+= '<a href="javascript:void(0);" title="禁用" onclick="grouptabEnabale('+row.id+',\''+row.title+'\',0)"><i class="fa fa-lock" aria-hidden="true"></i></a>';
+    							}
+    							if(__btnInfos.mod == 1){
+    								_html+= '<a href="javascript:void(0);" title="修改" onclick="grouptabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    							}
+    						}
+    					}else{
+    						_html =  '<a href="javascript:void(0);" title="禁用" onclick="grouptabEnabale('+row.id+',\''+row.title+'\',0)"><i class="fa fa-lock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="grouptabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    					}
+    					return _html;
+    				}else if(row.status == 0){
+    					var _html = "";
+    					if(__btnon == 1){
+    						if(__btnInfos!=""){
+    							if(__btnInfos.status == 1){
+    								_html+= '<a href="javascript:void(0);" title="启用" onclick="grouptabEnabale('+row.id+',\''+row.title+'\',1)"><i class="fa fa-unlock" aria-hidden="true"></i></a>';
+    							}
+    							if(__btnInfos.mod == 1){
+    								_html+= '<a href="javascript:void(0);" title="修改" onclick="grouptabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    							}
+    						}
+    					}else{
+    						_html =  '<a href="javascript:void(0);" title="启用" onclick="grouptabEnabale('+row.id+',\''+row.title+'\',1)"><i class="fa fa-unlock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="grouptabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    					}
+    					return _html;
+    				}
+    			}
+	    	},
+	    ]],
+	    onLoadSuccess:function(data){
+	    },
+  });
+}
+function queryParams(params){
+    return{
+        page: params.limit,
+        //请求第几页
+        rows:params.offset,
+        order:params.order,
+        sort:params.sort,
+    }
+}
+
+function grouptabEnabale(id,title,type){
+	var msg = ['禁用','启用'];
+	Lwin.confirm({ message: "你确定要<span class='star'>"+msg[type]+"</span>【"+title+"】？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Grouptab/changeStatus')}",{"id":id,'status':type},function(json){
+			if(json.result == "1"){
+				toastr.success("操作成功！");
+				$('#grouptab-grid').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作成功！");
+			}
+		},'json');
+	});
+}
+
+//加载功能权限树
+function loadRuleTree(type,id){
+	$.post("{:U('Grouptab/getRuleTree')}",{'type':type,'id':id},function(json){
+		//先销毁树
+		$('#ruleTree').jstree("destroy");
+		$('#ruleTree').on("loaded.jstree",function(e,data){
+			if(typeof json.ruleCheckedInfo !== "undefined" && json.ruleCheckedInfo !=""){
+				var checkId = json.ruleCheckedInfo;
+				$("#ruleTree").find("li").each(function(){   
+		           	if(checkId instanceof Array){  
+		                for(var i=0;i<checkId.length;i++){  
+		                    if($(this).attr("id") == checkId[i]){  
+		                      $("#ruleTree").jstree("check_node",$(this));  
+		                    }  
+		                }  
+		            } 
+		     	});
+			}
+			
+			if(typeof json.groupInfos !== "undefined" && json.groupInfos !="" ){
+				$("#title").val(json.groupInfos.title);
+				var tempStatus = json.groupInfos.status == 1 ? 0 : 1;
+				$("#status"+tempStatus).prop("checked",true);
+				__editing_groupid__ = json.groupInfos.id;
+			}
+		}).jstree({
+			'core':{ 'data' : json.ruleInfos, "cache":false  },
+			plugins : ["checkbox","sort","types","wholerow","search"], 
+				"types" : { "file" : { "icon" : "fa fa-file-o" }}
+		});
+		
+		//绑定搜索
+		var to = false;
+		$('#ruleTreeSeacher').keyup(function (){
+		    if(to){ clearTimeout(to); }
+		    to = setTimeout(function () {
+		      var v = $('#ruleTreeSeacher').val();
+		      $('#ruleTree').jstree(true).search(v);
+		    }, 250);
+		});
+	},'json');
+}
+
+function saveGrouptab(){
+	var title = $("#title").val().trim();
+	if(title == ""){
+		toastr.error("组名不能为空！");
+		return ;
+	}
+	var status = $("input[name='status']:radio:checked").val();
+	var info = {};
+	info['title'] = title;
+	info['status'] = status;
+	var nodes = $("#ruleTree").jstree("get_checked");
+	var ruleIDs = "";
+	for(var i=0;i<nodes.length;i++){
+		var org = $("#ruleTree").jstree().get_node(nodes[i])["original"];
+		if(org["id"] == "rule_"+org['flag']){
+			ruleIDs += org['flag']+",";
+		}
+	}
+	if(ruleIDs!=""){
+		ruleIDs = ruleIDs.substring(0,ruleIDs.length-1)
+	}
+	info['rules'] = ruleIDs;
+	var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+	new PNotify({
+        title: '{$Think.lang.HOME_COMMON_TIPS}',
+        text: '确定要保存么？',
+        type: 'custom',
+        icon: "fa fa-user",
+        hide: false,
+        cornerclass: 'pnotify-sharp',
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: true
+        },
+        addclass: 'stack-modal pnotify-primary',
+        stack: stack_modal
+    }).get().on('pnotify.confirm', function () {
+    		saveGrouptab_sure(info);
+        });
+}
+//保存动作
+function saveGrouptab_sure(info){
+	$.ajax({
+		type:"post",
+		url:"{:U('Grouptab/repairInfo')}",
+		async:true,
+		dataType:"json",
+		data:{data:info,'id':__editing_groupid__},
+		success:function(json){
+			if(json["result"] == "1"){
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEOK}");
+				$('#grouptab-add').modal('hide');
+				$('#grouptab-grid').bootstrapTable("refresh");
+			}else{
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEERROR}")
+			}
+		}
+	});
+}
+
+function grouptabMod(id){
+	$('#grouptab-add').modal('show');
+	loadRuleTree(1,id);
+}
+</script>

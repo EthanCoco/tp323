@@ -1,0 +1,240 @@
+<!--
+	作者：offline
+	时间：2017-08-04
+	描述：反馈信息
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs">
+            <li><i class="fa fa-comments-o" aria-hidden="true"></i><a href="#">信息列表</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	
+	<div id="feedback" style="width:auto">
+		
+	</div>
+	
+</div>
+
+<script>
+	$(function(){
+		var waTable = $("#feedback").WATable({
+			debug:false,	//开启调试模式
+			//dataBind:true,	//
+			pageSize: 20,  	//初始显示页数
+			pageSizePadding: true, 	//空数据时候是否显示空行（true=显示，fasle=不显示）
+			transition: 'slide',	//动画效果
+			transitionDuration: 0.2, //动画时间
+			filter: true, 			//显示过滤字段
+			sorting: true,			//启用排序
+			sortEmptyLast:true,		//空字段排最后
+			columnPicker: true, 
+			pageSizes: [20,50,100], 	//分页下拉
+			hidePagerOnEmpty: false, //空数据时候是否显示分页（true=不显示，false=显示）
+			checkboxes: true,		 //复选框
+			checkAllToggle:true, 	//是否显示全选复选框（true=显示，false=不显示）
+			preFill: true,
+			//url: "{:U('Manage/listfb')}" ,  
+          	//urlData: { report:1 } ,    
+          	//urlPost: true  ,
+          	
+			types: {                    
+                string: {
+                    //filterTooltip: "Giggedi..."    //What to say in tooltip when hoovering filter fields. Set false to remove.
+                    //placeHolder: "Type here..."    //What to say in placeholder filter fields. Set false for empty.
+                },
+                number: {
+                    decimals: 1   //Sets decimal precision for float types
+                },
+                bool: {
+                    //filterTooltip: false
+                },
+                date: {
+                  utc: true,            //Show time as universal time, ie without timezones.
+                  //format: 'yy/dd/MM',   //The format. See all possible formats here http://arshaw.com/xdate/#Formatting.
+                  datePicker: true      //Requires "Datepicker for Bootstrap" plugin (http://www.eyecon.ro/bootstrap-datepicker).
+                }
+            },
+			actions: {                //This generates a button where you can add elements.
+                filter: true,         //If true, the filter fields can be toggled visible and hidden.
+                columnPicker: true,   //if true, the columnPicker can be toggled visible and hidden.
+                custom: [             //Add any other elements here. Here is a refresh and export example.
+                  $('<a href="#" class="refresh"><span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh</a>'),
+                  $('<a href="#" class="export all"><span class="glyphicon glyphicon-share"></span>&nbsp;Export all rows</a>'),
+                  $('<a href="#" class="export checked"><span class="glyphicon glyphicon-share"></span>&nbsp;Export checked rows</a>'),
+                  $('<a href="#" class="export filtered"><span class="glyphicon glyphicon-share"></span>&nbsp;Export filtered rows</a>'),
+                  $('<a href="#" class="export rendered"><span class="glyphicon glyphicon-share"></span>&nbsp;Export rendered rows</a>')
+                ]
+            },
+			tableCreated: function(data) {    
+                console.log(data);
+                //alert(JSON.stringify(data.table.rows));
+            },
+            rowClicked: function(data) {      //Fires when a row or anything within is clicked (Note. You need a column with the 'unique' property).
+                console.log('row clicked');   //data.event holds the original jQuery event.
+                //Removes the row if user clicked on the column called 'remove'.
+                if (data.column.column == "remove") {
+                    data.event.preventDefault();
+                    //Remove fast with dataBind option
+                    waTable.getData().rows.splice(data.index, 1);
+                    Platform.performMicrotaskCheckpoint();
+                }
+                //We can look at classes on the clicked element as well
+                if (this.classList.contains('someClass')) {
+                    //Do something...
+                }
+                //Example toggle checked state
+                if (data.column.column == "check") {
+                    data.checked = !data.checked;
+                }
+                console.log(data);
+            },
+            columnClicked: function(data) {    //Fires when a column is clicked
+              console.log('column clicked');  //data.event holds the original jQuery event
+              console.log(data);              //data.column holds the underlying column you supplied
+                                              //data.descending is true when sorted descending (duh)
+            },
+            pageChanged: function(data) {      //Fires when manually changing page
+              console.log('page changed');    //data.event holds the original jQuery event
+              console.log(data);              //data.page holds the new page index
+            },
+            pageSizeChanged: function(data) {  //Fires when manually changing pagesize
+              console.log('pagesize changed');//data.event holds teh original event
+              console.log(data);              //data.pageSize holds the new pagesize
+            }
+        }).data('WATable');  //This step reaches into the html data property to get the actual WATable object. Important if you want a reference to it as we want here.
+        //Generate some data
+        var data = generateSampleData();
+        waTable.setData(data);  //Sets the data.
+
+//      var allRows = waTable.getData(false); //Returns the data you previously set.
+//      var checkedRows = waTable.getData(true); //Returns only the checked rows.
+//      var filteredRows = waTable.getData(false, true); //Returns only the filtered rows.
+//      var renderedRows = waTable.getData(false, false, true) //Returns only the rendered rows.
+
+        //Set options on the fly
+          var pageSize = waTable.option("pageSize"); //Get option
+          waTable.option("pageSize", pageSize); //Set option
+
+        //Databinding example
+//      var row = waTable.getRow(5).row; //Get row with unique value of 5.
+//      row.name = "Data-Binding Works"; //This would update the table...but only in ultra modern browsers. (See here http://caniuse.com/#search=observe)
+//      Platform.performMicrotaskCheckpoint(); //This make sure it also works in browsers not yet compatible with Object.observe. This is the polyfill that's used.(https://github.com/polymer/observe-js).
+
+        //More databinding
+//      data.rows.shift(); //Removes the first row.
+//      var newRow = generateSampleData(1).rows[0];
+//      data.rows.push(newRow); //Add new row
+//      Platform.performMicrotaskCheckpoint();
+
+        //Example event handler triggered by the custom refresh link above.
+//      $('#example2').on('click', '.refresh', function(e) {
+//          e.preventDefault();
+//          //Get and set some new data
+//          var data = generateSampleData(100);
+//          waTable.setData(data, true);
+//      });
+        //Example event handler triggered by the custom export links above.
+//      $('#example2').on('click', '.export', function(e) {
+//          e.preventDefault();
+//          var elem = $(e.target);
+//          var data;
+//          if (elem.hasClass('all')) data = waTable.getData(false);
+//          else if (elem.hasClass('checked')) data = waTable.getData(true);
+//          else if (elem.hasClass('filtered')) data = waTable.getData(false, true);
+//          else if (elem.hasClass('rendered')) data = waTable.getData(false, false, true);
+//          console.log(data.rows.length + ' rows returned', data);
+//          alert(data.rows.length + ' rows returned.\nSee data in console.');
+//      });
+
+    });
+
+    //Generates some data.
+    function generateSampleData() {
+
+        //First define the columns
+        var cols = {
+            fid: {
+                index: 1, //The order this column should appear in the table
+                type: "number", //The type. Possible are string, number, bool, date(in milliseconds).
+                unique: true,  //This is required if you want checkable rows, databinding or to use the rowClicked callback. Be certain the values are really unique or weird things will happen.
+                hidden: true
+            },
+            name: {
+                index: 2,
+                type: "string",
+                friendly: "姓名",
+            },
+            phone: {
+                index: 3,
+                type: "string",
+                friendly: "联系方式",
+                sorting: true, //dont allow sorting
+            },
+            email: {
+                index: 4,
+                type: "string",
+                friendly: "邮箱",
+                //placeHolder: "50..90",
+            },
+            fcontent: {
+                index: 5,
+                type: "string",
+                friendly: "反馈内容",
+            },
+            ftime: {
+                index: 6,
+                type: "date", 
+                friendly: "反馈时间"
+            },
+            fstatus: {
+                index: 7,
+                type: "string", 
+                friendly: "是否已读"
+            },
+            fdealstatus: {
+                index: 8,
+                type: "string",
+                friendly: "是否已处理",
+            },
+            remove: {
+                index: 9,
+                type: "string",
+                friendly: "<span class='glyphicon glyphicon-remove'></span>",
+                format: "<a href='#' title='Remove me'><span class='glyphicon glyphicon-remove'></span></a>",
+                filter: false,
+                sorting: false,
+            },
+            check: {
+                index: 10,
+                type: "string",
+                friendly: "<span class='glyphicon glyphicon-check'></span>",
+                format: "<a href='#' title='Toggle checked'><span class='glyphicon glyphicon-check'></span></a>",
+                filter: false,
+                sorting: false,
+            }
+        };
+        var rows = "";
+        $.ajax({
+        	type:"post",
+        	url:"{:U('Manage/listfb')}",
+        	async:false,
+        	dataType:'json',
+        	success:function(json){
+        		rows = json.rows;
+        	}
+        });
+        
+        var data = {
+            cols: cols,
+            rows: rows,
+            otherStuff: {
+                thatIMight: 1,
+                needLater: true
+            }
+        };
+      return data;
+    }
+</script>

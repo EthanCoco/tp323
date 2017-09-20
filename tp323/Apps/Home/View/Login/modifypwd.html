@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" class="fixed accounts lock-screen">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{$Think.lang.HOME_VIEW_LOGIN_LOGIN_TITLE}</title>
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <!--<link rel="icon" type="image/png" sizes="192x192" href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">-->
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.css">
+   	<!--<link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/pnotify/<?php echo LANG_SET; ?>/pnotify.custom.css">-->
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/stylesheets/css/style.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="page-body">
+        <div class="logo">
+            <div class="avatar">
+                <img alt="<?php echo session(C('USERREALNAME')); ?>" src="<?php echo session(C('USERIMAGEURL')); ?>" />
+            </div>
+        </div>
+        <div class="box animated fadeInUp">
+            <div class="panel">
+                <div class="panel-content bg-scale-0">
+                    <h3 class="text-center mb-md"><?php echo session(C('USERREALNAME')); ?></h3>
+                    <div class="form-group">
+                        <span class="input-with-icon">
+                            <input type="password" class="form-control" id="password0" placeholder="{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_PWD0}">
+                            <i class="fa fa-key"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="input-with-icon">
+                            <input type="password" class="form-control" id="password1" placeholder="{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_PWD1}">
+                            <i style="color:#0000FF" class="fa fa-key"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="input-with-icon">
+                            <input type="password" class="form-control" id="password2" placeholder="{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_PWD2}">
+                            <i style="color:#4CAE4C" class="fa fa-key"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <a href="javascript:void(0);" onclick="modifySure()" class="btn btn-primary btn-block ">{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_SURE}</a>
+                    </div>
+                    <div class="form-group text-center">
+                        <a href="{:U('Manage/index')}">{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_BACK}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__HOMESTYLE__/Manage/javascripts/jquery.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/nano-scroller/nano-scroller.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-script.min.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-init.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.js"></script>
+<!--<script src="__HOMESTYLE__/Manage/vendor/pnotify/<?php echo LANG_SET; ?>/pnotify.custom.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/examples/ui-elements/notifications-pnotify.js"></script>-->
+<script src="__HOMESTYLE__/Manage/Jquery/md5.js"></script>
+<script src="__HOMESTYLE__/Manage/Share/share.js"></script>
+<script>
+$(function(){
+	unforward();
+	$("#password0").blur(function(){
+		var oldpsw = $("#password0").val();
+		if(oldpsw != ""){
+			validateuser1();
+		}
+	});
+});
+
+/**
+ * 校验密码
+ */
+function validateuser1(){
+	var password = $("#password0").val().trim();		//密码
+	setTimeout(function(){	
+		$.ajax({
+		    type:"post",
+		    dataType:"json",
+		    url:"{:U('Login/validatepwd')}",
+		    data:{"LoginForm":{"password": MD5(password,32)}},
+		    success:function(json){
+		    	if(json["result"]=="1"){
+		    		return true;
+		    	}else{
+		    		$("#password0").val("");
+		    		$("#password0").focus();
+		    		toastr.error('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG1}');
+					return ;
+		    	}
+	    		return;
+		    }
+		});
+	},500);
+}
+
+//修改密码
+function modifySure(){
+	var psw0 = $("#password0").val();
+	var psw1 = $("#password1").val();//密码
+	var psw2 = $("#password2").val();//密码确认
+	//判断是否为空
+	if(psw0 == '' || psw1 == '' || psw2 == ''){
+		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG2}');
+		return;
+	}
+	if(psw0 == psw1){
+		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG3}');
+		return;
+	}
+	if(psw1 != psw2){
+		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG4}');
+		return;
+	}
+	
+	if(psw1.length<7){
+		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG5}');
+		return;
+	}
+	
+	//判断密码格式是否正确
+	var validatePassWord = validatePwd(psw1);
+	if(validatePassWord == false){
+		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG6}');
+		return;
+	}
+	
+	$.ajax({
+	    type:"post",
+	    dataType:"json",
+	    url:"{:U('Login/updatepwd')}",
+	     data:{"LoginForm":{"password": MD5(psw1,32)}},
+	     success:function(json){
+	    	if(json["result"]=="1"){
+	    		toastr.info('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG7}');
+	    		window.location = "{:U('Login/logout')}";
+	    	}else{
+	    		$("#password0").val("");
+	    		$("#password0").focus();
+	    		toastr.error('{$Think.lang.HOME_VIEW_LOGIN_MODIFYPWD_MSG8}');
+	    	}
+    		return;
+	    }
+	});
+}
+</script>
+
+</body>
+</html>

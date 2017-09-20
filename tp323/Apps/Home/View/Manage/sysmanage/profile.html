@@ -1,0 +1,337 @@
+<!--
+	作者：lijl
+	时间：2017-07-31
+	描述：个人信息
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs">
+            <li><i class="fa fa-user" aria-hidden="true"></i><a href="#">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_TITLE}</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+    <div class="col-md-6 col-lg-4" style="border: 1px solid #FAFAFA; padding: 5px;">
+        <div>
+            <div class="profile-photo">
+                <img alt="<?php echo session(C('USERREALNAME')); ?>" src="<?php echo session(C('USERIMAGEURL')); ?>" />
+            </div>
+            <div class="user-header-info">
+                <h2 class="user-name"><?php echo session(C('USERREALNAME')); ?></h2>
+                <h5 class="user-position">
+                	<?php 
+                		if(session(C('USERSEX')) == "0"){
+							echo L('HOME_COMMON_SEX0');
+						}else if(session(C('USERSEX')) == "1"){
+							echo L('HOME_COMMON_SEX1');
+						}else{
+							echo L('HOME_COMMON_SEX2');
+						}
+                	?>
+                </h5>
+            </div>
+            <div style="float: right;"><a href="javascript:void(0);" onclick="initProfile()" style="cursor: pointer;"><i class="fa fa-edit"></i></a></div>
+        </div>
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl" id="baseinfo">
+            
+        </div>
+        <div class="panel  b-primary bt-sm ">
+            <div class="panel-content">
+                <div class="widget-list list-sm list-left-element ">
+                    <ul id="countOperate">
+                    	
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-8">
+        <div class="timeline animated fadeInUp" id="operateInfo">
+            
+        </div>
+        
+    </div>
+</div>
+
+<!--修改信息-->
+<div class="modal fade" id="profile-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MODIFYTITLE}</h4>
+            </div>
+            <div class="modal-body">
+            	
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="profile-form" class="form-horizontal form-stripe">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_NAME}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_NAME}" type="text" class="form-control" id="name" name="name" r=1 required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+	                            <label for="" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_SEX}<span class="required">*</span></label>
+	                            <div class="col-sm-6">
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_SEX}" type="radio" id="sex0" name="usersex" value="0">
+	                                    <label for="sex0">{$Think.lang.HOME_COMMON_SEX0}</label>
+	                                </div>
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_SEX}" type="radio" id="sex1" name="usersex" value="1">
+	                                    <label for="sex1">{$Think.lang.HOME_COMMON_SEX1}</label>
+	                                </div>
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_SEX}" type="radio" id="sex2" name="usersex" value="2">
+	                                    <label for="sex2">{$Think.lang.HOME_COMMON_SEX2}</label>
+	                                </div>
+	                            </div>
+	                        </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_EMAIL}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_EMAIL}" type="text" class="form-control" id="email" name="email" r=1 req=1 validate="validateEmail" reqt="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG1}" reqc="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG2}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                            	<label for="useraddr" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR}<span class="required">*</span></label>
+		                        <div class="col-sm-6">
+		                            <select title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR1}" r=1 class="form-control" name="userprovince" id="userprovince" onchange="loadRegion('userprovince',2,'usercity','{:U('Sharefun/getregion')}');">
+									  	<option value="" selected>{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR1}</option>
+									  	<volist name="provinceInfo" id="vo"> 
+									  		<option value="{$vo.id}" >{$vo.name}</option>
+									  	</volist>
+									</select>          
+									<select title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR2}" r=1 class="form-control"  name="usercity" id="usercity"  onchange="loadRegion('usercity',3,'usertown','{:U('Sharefun/getregion')}');">
+									  	<option value="" >{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR2}</option>
+									</select>
+									<select title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR3}" r=1 class="form-control" name="usertown" id="usertown">
+									  	<option value="">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDR3}</option>
+									</select>
+								</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="useraddrdetail" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDRDETAIL}<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<textarea title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_ADDRDETAIL}" class="form-control" rows="3" id="useraddrdetail" name="useraddrdetail" r=1 placeholder="" maxlength="100"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userdiscrip" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_PROFILEINFO}</label>
+                                <div class="col-sm-6">
+                                	<textarea title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_PROFILEINFO}" class="form-control" rows="3" id="userdiscrip" name="userdiscrip" placeholder="" maxlength="100"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+						        <label for="userimageurl" class="col-sm-3 control-label">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_IMAGE}</label>
+						        <div class="col-sm-6 tl th">
+						            <input title="{$Think.lang.HOME_VIEW_MANAGE_PROFILE_IMAGE}" id="userimageurl" type="file" name="userimageurl" image=1 class="projectfile" >
+						            <p class="help-block">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG3}</p>
+						        </div>
+						    </div>  
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="saveProfile()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//个人信息
+var __profileInfo = ""
+
+//获取个人信息 初始化
+$(function(){
+	$.ajax({
+		type:"post",
+		url:"{:U('Usertab/profileinfo')}",
+		async:true,
+		dataType:'json',
+		success:function(json){
+			$("#baseinfo").html("");
+			var _html = "";
+			
+			_html += '<div class="panel-content"><h4 class=""><b>{$Think.lang.HOME_VIEW_MANAGE_PROFILE_CONCAT}</b></h4><ul class="user-contact-info ph-sm">';
+			
+			if(json.email == "" || json.email == null){
+				_html += '<li><b><i class="color-primary mr-sm fa fa-envelope"></i></b>{$Think.lang.HOME_VIEW_MANAGE_PORFILE_EMAIL}</li>';
+			}else{
+				_html += '<li><b><i class="color-primary mr-sm fa fa-envelope"></i></b>'+json.email+'</li>';
+			}
+			
+			if(json.phone == "" || json.phone == null){
+				_html += '<li><b><i class="color-primary mr-sm fa fa-phone"></i></b>{$Think.lang.HOME_VIEW_MANAGE_PORFILE_PHONE}</li>';
+			}else{
+				_html += '<li><b><i class="color-primary mr-sm fa fa-phone"></i></b>'+json.phone+'</li>';
+			}
+			
+			if(json.userprovince == "" || json.userprovince == null){
+				_html += '<li><b><i class="color-primary mr-sm fa fa-globe"></i></b>{$Think.lang.HOME_VIEW_MANAGE_PORFILE_ADDR}</li>';
+			}else{
+				_html += '<li><b><i class="color-primary mr-sm fa fa-globe"></i></b>'+json.userprovince+' '+json.usercity+' '+json.usertown+' '+json.useraddrdetail+'</li>';
+			}
+			
+			if(json.userdiscrip == "" || json.userdiscrip == null){
+				_html += '<li class="mt-sm">{$Think.lang.HOME_VIEW_MANAGE_PORFILE_DESCRIP}</li>';
+			}else{
+				_html += '<li class="mt-sm">'+json.userdiscrip+'</li>';
+			}
+			
+			_html += '</ul></div>';
+			
+			$("#baseinfo").append(_html);
+			__profileInfo = json;
+			//do something
+			//清空表单数据
+			$("#profile-form").form("clear");
+			//填充数据
+			$("#name").val(__profileInfo.name);
+			$("#sex"+__profileInfo.usersex).prop("checked",true);
+			$("#email").val(__profileInfo.email);
+			
+			$("#userprovince").val(__profileInfo.userprovince1);
+			loadRegion('userprovince',2,'usercity',"{:U('Sharefun/getregion')}");
+			setTimeout(function(){	
+				$("#usercity").val(__profileInfo.usercity1);
+				loadRegion('usercity',3,'usertown',"{:U('Sharefun/getregion')}");
+				setTimeout(function(){	$("#usertown").val(__profileInfo.usertown1);},500);
+			},500);
+			
+			$("#useraddrdetail").val(__profileInfo.useraddrdetail);
+			$("#userdiscrip").val(__profileInfo.userdiscrip);
+			$("#userimageurl").attr("value",  __profileInfo.userimageurl);
+			
+			loadProfileOperate();
+		}
+	});
+	//初始化onblur 事件
+	initBlurValidate("profile-form");
+});
+
+//初始化字段属性
+function initProfile(){
+	$("#profile-edit").modal('show');
+	$('#useraddrdetail').maxlength({ alwaysShow: true,  placement: 'top-right-inside'});
+	$('#userdiscrip').maxlength({ alwaysShow: true,  placement: 'top-right-inside'});
+	//初始化图片上传控件
+	imageUpload('userimageurl');
+}
+
+//保存信息
+function saveProfile(){
+	//校验
+	if(!validateForm("profile-form")){
+		return;
+	}
+	
+	//获取表单字段信息
+	var info = getFormData("profile-form");
+	//alert(JSON.stringify(info));return;
+	var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+	new PNotify({
+        title: '{$Think.lang.HOME_COMMON_TIPS}',
+        text: '{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG4}',
+        type: 'custom',
+        icon: "fa fa-user",
+        hide: false,
+        cornerclass: 'pnotify-sharp',
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: true
+        },
+        addclass: 'stack-modal pnotify-primary',
+        stack: stack_modal
+    }).get().on('pnotify.confirm', function () {
+    		saveProfile_sure(info);
+        });
+}
+
+//保存动作
+function saveProfile_sure(info){
+	//alert(JSON.stringify(info));
+	$.ajax({
+		type:"post",
+		url:"{:U('Usertab/saveprofile')}",
+		async:true,
+		dataType:"json",
+		data:{data:info},
+		success:function(json){
+			if(json["result"] == "1"){
+				toastr.success("{$Think.lang.HOME_COMMON_SAVEOK}");
+				$("#profile-edit").modal('hide');
+				//do something
+				location.reload();
+			}else{
+				toastr.error("{$Think.lang.HOME_COMMON_SAVEERROR}")
+			}
+		}
+	});
+}
+
+/**
+ * 加载个人操作信息
+ */
+function loadProfileOperate(){
+	$.ajax({
+		type:"post",
+		url:"{:U('Usertab/operateinfo')}",
+		async:true,
+		dataType:'json',
+		success:function(json){
+			$("#operateInfo").html("");
+			var _html = "";
+			if(json.timelist == null || json.timelist == ""){
+				_html += "<div class='timeline-box'><div class='timeline-icon bg-primary'><i>1</i></div><div class='timeline-content'>{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG5}</div></div>";
+			}else{
+				var rowInfo = json.timelist;
+				for(var i = 0; i<rowInfo.length; i++){
+					_html += '<div class="timeline-box"><div class="timeline-icon bg-primary"><i>' + rowInfo[i]['type'] + '</i></div>';
+					_html += '<div class="timeline-content"><h4 class="tl-title">' + rowInfo[i]['typename'] + '</h4> ' +rowInfo[i]['content'] + '</div>' ;
+					_html += '<div class="timeline-footer">'
+		            _html += '<span>' + rowInfo[i]['time'] + '</span>';
+		            _html +='</div></div>';
+				}
+			}
+			$("#operateInfo").append(_html);
+			
+			$("#countOperate").html("");
+			var _ulHtml = '';
+			if(json.ullist == null || json.ullist == ""){
+				_ulHtml += '<li><a href="javascript:void(0);"><div class="text"><span class="title">{$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG5}</span></div></a></li>';
+			}else{
+				var uinfo = json.ullist;
+				for(var i = 0; i<uinfo.length; i++){
+					_ulHtml += '<li>';
+					_ulHtml += '<a href="javascript:void(0);">';
+					_ulHtml += '<div class="left-element">' + uinfo[i]['typename'] + '</div>';
+					_ulHtml += '<div class="text">';
+					_ulHtml += '<span class="title">' + uinfo[i]['num'] + ' {$Think.lang.HOME_VIEW_MANAGE_PROFILE_MSG6} </span>';
+					_ulHtml += '<span class="subtitle"> ' + uinfo[i]['username'] + '</span>';
+					_ulHtml += '</div></a></li>';
+				}
+			}
+			$("#countOperate").append(_ulHtml);
+		}
+	});
+}
+</script>

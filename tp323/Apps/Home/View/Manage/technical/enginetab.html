@@ -1,0 +1,688 @@
+<!--
+	作者：lijl
+	时间：2017-09-11
+	描述：规则引擎
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="enginetab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+	<div class="panel">
+   		<table id="enginetab-grid" class="table table-hover">
+			
+		</table>
+	</div> 
+	<div id="enginetab-bar" title="添加" class="btn-group pull-right" style="margin-right: 20px;">
+		<div class="dropdown" style="float: right;">
+		    <button id="enginetab_btn_add" type="button" class="btn btn-default">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+	    </div>
+	</div>
+	
+	<div id="enginetab-bar-ruleparser" title="添加" class="btn-group pull-right" style="margin-right: 20px;display: none;">
+		<div class="dropdown" style="float: right;">
+		    <button id="enginetab_btn_add_ruleparser" type="button" class="btn btn-default">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+	    </div>
+	</div>
+	<div id="enginetab-bar-rulefield" title="添加" class="btn-group pull-right" style="margin-right: 20px;display: none;">
+		<div class="dropdown" style="float: right;">
+		    <button id="enginetab_btn_add_rulefield" type="button" class="btn btn-default">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+	    </div>
+	</div>
+</div>
+
+<div class="modal fade" id="enginetab-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">规则模板</h4>
+            </div>
+            <div class="modal-body">
+            	
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="enginetab-form" class="form-horizontal form-stripe">
+                        	<div class="form-group">
+                            	<label for="rulename" class="col-sm-3 control-label">模板名称<span class="required">*</span></label>
+		                        <div class="col-sm-6">
+                                    <input title="模板名称" type="text" class="form-control" id="rulename" name="rulename" r=1 required>
+                                </div>
+                           </div>
+                            <div class="form-group">
+                                <label for="ruledescription" class="col-sm-3 control-label">规则描述<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<textarea title="规则描述" class="form-control" rows="3" id="ruledescription" name="ruledescription" r=1 placeholder="" maxlength="200"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+	                            <label for="" class="col-sm-3 control-label">状态<span class="required">*</span></label>
+	                            <div class="col-sm-6">
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="启用" type="radio" id="status0" name="status" value="1">
+	                                    <label for="status0">启用</label>
+	                                </div>
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="停用" type="radio" id="status1" name="status" value="0">
+	                                    <label for="status1">停用</label>
+	                                </div>
+	                            </div>
+	                        </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="saveEnginetab()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="enginetab-modal-grid" tabindex="-1" role="dialog" aria-labelledby="enginetab-modal-click" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+    	<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="enginetab-modal-click"></h4>
+            </div>
+            <div class="modal-body">
+            	<table class="table table-bordered">
+            		<tr>
+				      <td style="text-align: center; vertical-align: middle; width: 80px; ">变量字段</td>
+				      <td style="text-align: center; vertical-align: middle; " id="fieldStr"></td>
+				      <td style="text-align: center; vertical-align: middle; width: 140px;">
+				      	<a href="javascript:void(0);" onclick="engineTryOut()" title="试用"><i class="fa fa-frown-o" aria-hidden="true"></i></a>
+				      		&nbsp;&nbsp;&nbsp;&nbsp;
+				      	<a href="javascript:void(0);" onclick="modRuleField()" title="修改"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+				      </td>
+				    </tr>
+            	</table>
+            	<table id="enginetab-grid-ruleparser" class="table table-hover">
+			
+				</table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="enginetab-modal-ruleparser" tabindex="-1" role="dialog" aria-labelledby="enginetab-modal-click-ruleparser" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+    	<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="enginetab-modal-click-ruleparser"></h4>
+            </div>
+            <div class="modal-body">
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="ruleparser-form" class="form-horizontal form-stripe">
+                        	<div class="form-group">
+                            	<label for="rp_condition" class="col-sm-3 control-label">判断条件&nbsp;&nbsp;</label>
+		                        <div class="col-sm-6">
+                                    <input title="判断条件" type="text" class="form-control" id="rp_condition" name="rp_condition" >
+                                </div>
+                           </div>
+                            <div class="form-group">
+                                <label for="rp_field" class="col-sm-3 control-label">计算字段<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<input title="计算字段" type="text" class="form-control" id="rp_field" name="rp_field"  required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="rp_rule" class="col-sm-3 control-label">计算规则<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<input title="计算规则" type="text" class="form-control" id="rp_rule" name="rp_rule"  required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="rp_sort" class="col-sm-3 control-label">计算顺序<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<input title="计算顺序" type="number" class="form-control" id="rp_sort" name="rp_sort" placeholder="请输入数字" onkeyup="this.value=this.value.replace(/[^\d]/g,'');"  required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="ruleParserSave()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"  id="enginetab-modal-rulefield" tabindex="-1" role="dialog" aria-labelledby="enginetab-modal-click-rulefield" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+    	<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="enginetab-modal-click-rulefield">变量字段</h4>
+            </div>
+            <div class="modal-body">
+            	<table id="enginetab-grid-rulefield" class="table table-hover">
+			
+				</table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="enginetab-modal-rulefield-add" tabindex="-1" role="dialog" aria-labelledby="enginetab-modal-click-rulefield-add" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+    	<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="enginetab-modal-click-rulefield-add"></h4>
+            </div>
+            <div class="modal-body">
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="rulefield-form" class="form-horizontal form-stripe">
+                        	<div class="form-group">
+                            	<label for="name-rulefield" class="col-sm-3 control-label">变量名<span class="required">*</span></label>
+		                        <div class="col-sm-6">
+                                    <input title="变量名" type="text" class="form-control" id="name-rulefield" name="name-rulefield"  required>
+                                </div>
+                           </div>
+                            <div class="form-group">
+                                <label for="descraption-rulefield" class="col-sm-3 control-label">描述<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                	<textarea title="描述" class="form-control" rows="3" id="descraption-rulefield" name="descraption-rulefield"  maxlength="200" required></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="ruleFieldSave()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--
+试用
+-->
+<div class="modal fade" id="enginetab-modal-tryout" tabindex="-1" role="dialog" aria-labelledby="enginetab-modal-tryout-btn" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+    	<div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="enginetab-modal-tryout-btn"></h4>
+            </div>
+            <div class="modal-body">
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="enginetab-tryout-form" class="form-horizontal form-stripe">
+                        </form>
+                    </div>
+                    
+                    <div class="col-md-12" style="text-align: right;">
+                    	<button type="button" class="btn btn-default"  onclick="tryoutClear()">重置</button>
+                        <button type="button" class="btn btn-primary"  onclick="tryoutCaculate()">计算</button>
+                    </div>
+                    <div class="col-md-12">
+	                    <div class="panel">
+	                    	<div class="panel-heading">计算结果列表</div>
+	                		<div class="panel-content" style="min-height: 200px;" id="enginetab_tryout_result_list">
+	                			
+	                		</div>
+	                	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+var __editing_engineid__ = "";
+var __editing_enginename__ = "";
+var __rulefieldid__ = "";
+var __ruleparserid__ = "";
+$(function(){
+	//添加菜单名
+	$("#enginetab").find("li i").addClass(levelFirstFa);
+	$("#enginetab").find("li a").html(levelFirst);
+	
+	$('#ruledescription').maxlength({ alwaysShow: true,  placement: 'top-right-inside'});
+	$("#enginetab_btn_add").bind('click',function(){
+		$('#enginetab-add').modal('show');
+		$("#enginetab-form").form("clear");
+		$("#status0").prop("checked",true);
+	});
+	
+	$("#enginetab_btn_add_ruleparser").bind('click',function(){
+		$('#enginetab-modal-ruleparser').modal('show');
+		$("#enginetab-modal-click-ruleparser").html("添加规则计算");
+		$("#ruleparser-form").form("clear");
+	});
+	
+	$("#enginetab_btn_add_rulefield").bind('click',function(){
+		$('#enginetab-modal-rulefield-add').modal('show');
+		$("#enginetab-modal-click-rulefield-add").html("添加变量字段");
+		$('#rulefield-form').form("clear");
+	});
+	
+	//初始化onblur事件
+	initBlurValidate("enginetab-form");
+	
+	loadEnginetab();
+});
+
+function loadEnginetab(){
+	$('#enginetab-grid').bootstrapTable("destroy");
+	$('#enginetab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Enginetab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#enginetab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'id',title:'id',valign:'middle',align:'center',visible:false} ,
+			{field:'rulename',title:'规则名称',valign:'middle',align:'center'},
+			{field:'ruledescription',title:'规则描述',valign:'middle',align:'center',sortable:false},
+	        {field:'status',title:'状态',valign:'middle',align:'center',sortable:false,formatter: function(value,row,index){return value== "1" ? "{$Think.lang.HOME_COMMON_ENABLE}" : "{$Think.lang.HOME_COMMON_UNENABLE}"; }},
+	        {field:'operater',title:'操作',valign:'middle',align:'center',sortable:false,
+        		formatter: function(value,row,index){
+    				if(row.status == 1){
+    					return '<a href="javascript:void(0);" title="禁用" onclick="enginetabEnabale('+row.id+',\''+row.rulename+'\',0)"><i class="fa fa-lock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="enginetabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    				}else if(row.status == 0){
+    					return '<a href="javascript:void(0);" title="启用" onclick="enginetabEnabale('+row.id+',\''+row.rulename+'\',1)"><i class="fa fa-unlock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="enginetabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    				}
+    			}
+	        },
+	    	
+	    ]],
+	    onDblClickRow:function(row,index){
+	    	__editing_engineid__ = row.id;
+	    	__editing_enginename__ = row.rulename;
+	    	$("#enginetab-modal-click").html(row.rulename);
+	    	$('#enginetab-modal-grid').modal('show');
+	    	loadRuleParserGrid();
+	    },
+  });
+}
+function queryParams(params){
+    return{
+        page: params.limit,
+        //请求第几页
+        rows:params.offset,
+        //order:params.order,
+        id:__editing_engineid__,
+    }
+}
+
+function saveEnginetab(){
+	//校验字段完整性
+	if(!validateForm("enginetab-form")){
+		return;
+	}
+	//获取表单字段信息
+	var info = getFormData("enginetab-form");
+	//alert(JSON.stringify(info));
+	//提示动作
+	var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+	new PNotify({
+        title: '{$Think.lang.HOME_COMMON_TIPS}',
+        text: '确定要保存么？',
+        type: 'custom',
+        icon: "fa fa-user",
+        hide: false,
+        cornerclass: 'pnotify-sharp',
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: true
+        },
+        addclass: 'stack-modal pnotify-primary',
+        stack: stack_modal
+    }).get().on('pnotify.confirm', function () {
+    		saveEnginetab_sure(info);
+        });
+}
+//保存动作
+function saveEnginetab_sure(info){
+	$.ajax({
+		type:"post",
+		url:"{:U('Enginetab/repairInfo')}",
+		async:true,
+		dataType:"json",
+		data:{data:info,'id':__editing_engineid__},
+		success:function(json){
+			if(json["result"] == "1"){
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEOK}");
+				$('#enginetab-add').modal('hide');
+				$('#enginetab-grid').bootstrapTable("refresh");
+			}else{
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEERROR}")
+			}
+		}
+	});
+}
+
+function enginetabEnabale(id,title,type){
+	var msg = ['禁用','启用'];
+	Lwin.confirm({ message: "你确定要<span class='star'>"+msg[type]+"</span>【"+title+"】？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Enginetab/changeStatus')}",{"id":id,'status':type},function(json){
+			if(json.result == "1"){
+				toastr.success("操作成功！");
+				$('#enginetab-grid').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作成功！");
+			}
+		},'json');
+	});
+}
+
+function enginetabMod(id){
+	$('#enginetab-add').modal('show');
+	$("#enginetab-form").form("clear");
+	$.post("{:U('Enginetab/getEngineInfo')}",{"id":id},function(json){
+		var info = json.info;
+		$("#rulename").val(info.rulename);
+		$("#ruledescription").val(info.ruledescription);
+		var tempStatus = info.status == 1 ? 0 : 1;
+		$("#status"+tempStatus).prop("checked",true);
+		__editing_engineid__ = info.id;
+	},'json');
+}
+
+function loadRuleParserGrid(){
+	$("#enginetab-bar-ruleparser").css("display","");
+	$('#enginetab-grid-ruleparser').bootstrapTable("destroy");
+	$('#enginetab-grid-ruleparser').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Enginetab/listinfosub')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:400,//高度调整
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#enginetab-bar-ruleparser',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'rp_id',title:'rp_id',valign:'middle',align:'center',visible:false} ,
+			{field:'rp_it_id',title:'模板ID',valign:'middle',align:'center',visible:false},
+			{field:'rp_condition',title:'判断条件',valign:'middle',align:'center',sortable:false},
+	        {field:'rp_field',title:'计算字段',valign:'middle',align:'center',sortable:false},
+	        {field:'rp_rule',title:'计算规则',valign:'middle',align:'center',sortable:false},
+	        {field:'rp_sort',title:'计算顺序',valign:'middle',align:'center',sortable:false},
+	        
+	        {field:'operater',title:'操作',valign:'middle',align:'center',sortable:false,
+        		formatter: function(value,row,index){
+    				return '<a href="#" title="修改" onclick="ruleparserMod('+row.rp_id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" title="删除" onclick="ruleParserDel('+row.rp_id+')"><i class="fa fa-minus" aria-hidden="true"></i></a>';
+    			}
+	        },
+	    	
+	    ]],
+	    onLoadSuccess:function(data){
+	    	$("#fieldStr").html(data.fieldStr);
+	    }
+  });
+}
+
+function ruleParserDel(id){
+	Lwin.confirm({ message: "你确定要删除该条记录么？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Enginetab/delRuleParser')}",{"id":id},function(json){
+			if(json["result"] == "1"){
+				toastr.success("操作成功！");
+				$('#enginetab-grid-ruleparser').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作失败！");
+			}
+		},'json');
+	});
+}
+
+function ruleParserSave(){
+	var rp_condition = $("#rp_condition").val().trim();
+	var rp_field = $("#rp_field").val().trim();
+	var rp_rule = $("#rp_rule").val().trim();
+	var rp_sort = $("#rp_sort").val().trim();
+	if(rp_field == ""){
+		toastr.error("计算字段不能为空！");
+		return ;
+	}
+	
+	if(rp_rule == ""){
+		toastr.error("计算规则不能为空！");
+		return ;
+	}
+	if(rp_sort == ""){
+		toastr.error("计算顺序不能为空！");
+		return ;
+	}
+	
+	Lwin.confirm({ message: "你确定要保存么？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Enginetab/saveRuleParser')}",{"rp_id":__ruleparserid__,'rp_condition':rp_condition,'rp_field':rp_field,'rp_rule':rp_rule,'rp_sort':rp_sort,'rp_it_id':__editing_engineid__},function(json){
+			if(json["result"] == "1"){
+				toastr.success("操作成功！");
+				$('#enginetab-modal-ruleparser').modal('hide');
+				$('#enginetab-grid-ruleparser').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作失败！");
+			}
+		},'json');
+	});
+}
+
+
+function ruleparserMod(id){
+	$('#enginetab-modal-ruleparser').modal('show');
+	$("#enginetab-modal-click-ruleparser").html("修改规则计算");
+	$("#ruleparser-form").form("clear");
+	
+	$.post("{:U('Enginetab/getRuleParser')}",{"id":id},function(json){
+		$("#rp_condition").val(json.info.rp_condition);
+		$("#rp_field").val(json.info.rp_field);
+		$("#rp_rule").val(json.info.rp_rule);
+		$("#rp_sort").val(json.info.rp_sort);
+		__ruleparserid__ = json.info.rp_id;
+	},'json');
+	
+}
+
+
+
+
+function modRuleField(){
+	$("#enginetab-bar-rulefield").css("display","");
+	$("#enginetab-modal-rulefield").modal('show');
+	$('#enginetab-grid-rulefield').bootstrapTable("destroy");
+	$('#enginetab-grid-rulefield').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Enginetab/listRuleField')}",
+        queryParams:{'id':__editing_engineid__},//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        height:400,//高度调整
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#enginetab-bar-rulefield',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'id',title:'id',valign:'middle',align:'center',visible:false} ,
+			{field:'name',title:'变量名',valign:'middle',align:'center'},
+			{field:'descraption',title:'描述',valign:'middle',align:'center',sortable:false},
+	        {field:'operater',title:'操作',valign:'middle',align:'center',sortable:false,
+        		formatter: function(value,row,index){
+    				return '<a href="javascript:void(0);" title="修改" onclick="ruleFieldMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="删除" onclick="ruleFieldDel('+row.id+',\''+row.name+'\')"><i class="fa fa-minus" aria-hidden="true"></i></a>';
+    			}
+	        },
+	    	
+	    ]],
+  });
+}
+
+function ruleFieldDel(id,name){
+	Lwin.confirm({ message: "你确定要<span class='star'>删除</span>【"+name+"】？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Enginetab/delRuleField')}",{"id":id},function(json){
+			if(json["result"] == "1"){
+				toastr.success("操作成功！");
+				$('#enginetab-grid-rulefield').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作失败！");
+			}
+		},'json');
+	});
+}
+
+function ruleFieldMod(id){
+	$('#enginetab-modal-rulefield-add').modal('show');
+	$("#enginetab-modal-click-rulefield-add").html("修改变量字段");
+	$('#rulefield-form').form("clear");
+	$.post("{:U('Enginetab/getRuleField')}",{"id":id},function(json){
+		$("#name-rulefield").val(json.info.name);
+		$("#descraption-rulefield").val(json.info.descraption);
+		__rulefieldid__ = json.info.id;
+	},'json');
+}
+
+function ruleFieldSave(){
+	var name_rulefield = $("#name-rulefield").val().trim();
+	var descraption_rulefield = $("#descraption-rulefield").val().trim();
+	if(name_rulefield == ""){
+		toastr.error("变量名不能为空！");
+		return;
+	}
+	if(descraption_rulefield == ""){
+		toastr.error("描述不能为空！");
+		return;
+	}
+	var regex=/^[a-zA-Z_][A-Za-z0-9_]+$/ig;
+	if(!name_rulefield.match(regex)){
+		toastr.error("变量名为字母和下划线组成，且首字符为英文！");
+		return;
+	}
+	
+	Lwin.confirm({ message: "你确定要保存么？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Enginetab/saveRuleField')}",{"id":__rulefieldid__,'name':name_rulefield,'descraption':descraption_rulefield,'rp_model_id':__editing_engineid__},function(json){
+			if(json["result"] == "1"){
+				toastr.success("操作成功！");
+				$('#enginetab-modal-rulefield-add').modal('hide');
+				$('#enginetab-grid-rulefield').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作失败！");
+			}
+		},'json');
+	});
+	
+}
+
+function engineTryOut(){
+	$("#enginetab-modal-tryout").modal('show');
+	$("#enginetab-modal-tryout-btn").html("试用"+__editing_enginename__);
+	$("#enginetab-tryout-form").html("");
+	$("#enginetab_tryout_result_list").html("");
+	
+	$.post("{:U('Enginetab/listRuleField')}",{"id":__editing_engineid__},function(json){
+		var infos = json.rows;
+		var len = infos.length;
+		var _html = "";
+		for(var i=0;i<len;i++){
+			_html += '<div class="form-group">';
+            _html +=	'<label for="name-rulefield" class="col-sm-3 control-label">'+infos[i]['name']+'<span class="required">*</span></label>';
+            _html +=    '<div class="col-sm-6">';
+            _html +=        '<input title="'+infos[i]['descraption']+'" placeholder="'+infos[i]['descraption']+'" type="text" class="form-control" id="'+infos[i]['name']+'" name="'+infos[i]['name']+'"  required>';
+            _html +=    '</div>';
+            _html += '</div>';
+		}
+		$("#enginetab-tryout-form").append(_html);
+	},'json');
+	
+}
+
+function tryoutClear(){
+	$("#enginetab-tryout-form").find("input").each(function(){
+		$(this).val("");
+	});
+}
+
+function tryoutCaculate(){
+	var caculateInfo = {};
+	var flag = 0;
+	$("#enginetab-tryout-form").find("input").each(function(){
+		if($(this).val() == ""){
+			flag++;
+		}
+		caculateInfo[$(this).attr("name")] = $(this).val();
+	});
+	
+	if(flag > 0){
+		toastr.error("不允许有空值！");
+		return;
+	}
+	
+	var _html = "";
+	$("#enginetab_tryout_result_list").html("");
+	$.post("{:U('Enginetab/calculation')}",{"info":caculateInfo,'rp_it_id':__editing_engineid__},function(json){
+		for(var k in json){
+		 	_html += '<p>'+k+' = '+json[k]+'</p>'
+		}
+		$("#enginetab_tryout_result_list").append(_html);
+	},'json');
+	
+}
+</script>

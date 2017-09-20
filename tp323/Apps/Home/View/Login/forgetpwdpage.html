@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" class="fixed accounts lock-screen">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>忘记密码</title>
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/stylesheets/css/style.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="page-body">
+        <div class="box animated fadeInUp">
+            <div class="panel" style="height: 300px;" id="validate0">
+                <div class="panel-content bg-scale-0">
+                    <h3 class="text-center mb-md">忘记密码</h3>
+                    <div class="form-group" style="margin-top: 70px;">
+                    	<div class="col-sm-9">
+	                        <span class="input-with-icon">
+	                            <input type="text" class="form-control" id="email" placeholder="请输入注册邮箱">
+	                            <i class="fa fa-envelope"></i>
+	                        </span>
+                        </div>
+                        
+                        <div class="col-sm-3">
+                        	<a href="#" id="getcodeyzm" onclick="sendMailPwd()" class="btn btn-primary">发送</a>
+                        </div>
+                        
+                    </div>
+                    <div class="form-group">
+                    	<div class="col-sm-12">
+                    		<span class="input-with-icon">
+	                            <input type="text" class="form-control" id="vcode" placeholder="请输入验证码" onKeyDown="if (event.keyCode == 13) javascript:return send();">
+	                            <i class="fa fa-file-image-o"></i>
+	                        </span>
+                    	</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                        	<a href="javascript:void(0);" onclick="forgetPwdSure()" style="margin-top: 40px;" class="btn btn-primary btn-block ">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__HOMESTYLE__/Manage/javascripts/jquery.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/nano-scroller/nano-scroller.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-script.min.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-init.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.js"></script>
+<script src="__HOMESTYLE__/Manage/Jquery/md5.js"></script>
+<script src="__HOMESTYLE__/Manage/Share/share.js"></script>
+<script>
+function sendMailPwd(){
+	var email = $("#email").val().trim();
+	if(email == ""){
+		toastr.error("邮箱不能为空");
+		return;
+	}
+	if(!validateEmail(email)){
+		toastr.error("邮箱格式错误");
+		return;
+	}
+	
+	$.post("{:U('Login/sendMailPwd')}",{'email':email},function(json){
+		if(json.result == 0){
+			toastr.error(json.msg);
+			$("#email").focus();
+			return;
+		}else if(json.result == 1){
+			toastr.success(json.msg);
+			$("#getcodeyzm").html(json.wtime);
+			$("#getcodeyzm").attr("disabled","disabled");
+			setTime();
+		}
+	},'json');
+}
+
+function setTime(){
+	var wait = document.getElementById('getcodeyzm');
+	var interval = setInterval(function(){
+		if(wait.innerHTML == ""){
+			clearInterval(interval);
+		}else{
+			var time = --wait.innerHTML;
+			if(time <= 0) {
+				$("#getcodeyzm").html("发送");
+				$("#getcodeyzm").removeAttr("disabled");
+				clearInterval(interval);
+			};
+		}
+		
+	}, 1000);
+}
+
+function forgetPwdSure(){
+	var email = $("#email").val().trim();
+	var vcode = $("#vcode").val().trim();
+	if(email == ""){
+		toastr.error("邮箱不能为空");
+		return;
+	}
+	if(!validateEmail(email)){
+		toastr.error("邮箱格式错误");
+		return;
+	}
+	if(vcode == ""){
+		toastr.error("验证码不能为空");
+		$("#vcode").focus();
+		return;
+	}
+	$.post("{:U('Login/forgetpwdval')}",{'email':email,'vcode':vcode},function(json){
+		if(json.result){
+			var str = json.str;
+			var __url = "{:U('Login/forgetpwdmod')}";
+			document.location = __url+"?"+str;
+		}else{
+			toastr.error(json.msg);
+		}
+	},'json');
+}
+
+</script>
+
+</body>
+</html>

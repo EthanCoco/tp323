@@ -1,0 +1,38 @@
+<!--
+	作者：lijl
+	时间：2017-07-31
+	描述：左侧菜单
+-->
+<div class="left-sidebar">
+    <div class="left-sidebar-header">
+        <div class="left-sidebar-title">{$Think.lang.HOME_VIEW_INDEX_LEFT_MENUBAR}</div>
+        <div class="left-sidebar-toggle c-hamburger c-hamburger--htla hidden-xs" data-toggle-class="left-sidebar-collapsed" data-target="html">
+            <span></span>
+        </div>
+    </div>
+    <div id="left-nav" class="nano">
+        <div class="nano-content">
+            <nav>
+               <ul class="nav" id="main-nav">
+                    <li class="active-item"><a href="{:U('index')}" ><i class="fa fa-home" aria-hidden="true"></i><span>{$Think.lang.HOME_VIEW_INDEX_LEFT_HOMEPAGE}</span></a></li>
+                    <?php foreach($functionInfo as $info){  ?>
+                   		<?php if($info['functiontype'] == 0){ ?>
+                   			<?php echo '<li><a onclick="loadcontent(this);" href="javascript:void(0);" faicon="'.$info['functionimagecode'].'" fcode="'.$info['functionid'].'" fnname="'.$info['functionname'].'" name="'.$info['functionurl'].'"><i class="'.$info['functionimagecode'].'" aria-hidden="true"></i><span>'.$info['functionname'].'</span></a></li>'; ?>
+                   		<?php }else{ ?>
+                   			<li class="has-child-item close-item">
+                   				<a><i class="<?php echo $info['functionimagecode']; ?>" aria-hidden="true"></i><span><?php echo $info['functionname']; ?></span></a>
+                   			<?php if(!empty($info['child'])){ ?>
+                   				<ul class="nav child-nav level-1">
+                   				<?php foreach($info['child'] as $cinfo){ ?>
+                   					<li><a onclick="loadcontent(this);" fcode="<?php echo $cinfo['childrencode']; ?>" faicon="<?php echo $info['functionimagecode']; ?>" href="javascript:void(0);" name="<?php echo $cinfo['childrenurl']; ?>" fnname="<?php echo $cinfo['childrenname']; ?>"><?php echo $cinfo['childrenname']; ?></a></li>
+                   				<?php } ?>
+                   				</ul>
+                   			<?php } ?>
+                   			</li>
+                   		<?php } ?>
+                    <?php } ?>
+                </ul> 
+            </nav>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,186 @@
+<!--
+	作者：lijl
+	时间：2017-08-01
+	描述：用户权限管理
+-->
+<link rel="stylesheet" href="__HOMESTYLE__/Manage/jstree/themes/default/style.min.css">
+<script src="__HOMESTYLE__/Manage/jstree/jstree.min.js"></script>
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="authoritytab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="col-md-6 col-lg-6">
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl">
+            <div class="panel-content" style="min-height: 600px;">
+            	<input type="text" class="form-control input-style" id="treeSeacher" />
+                <div class="tree" id="userTree">
+                	
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="col-md-6 col-lg-6">
+        <div class="panel bg-scale-0 b-primary bt-sm mt-xl">
+            <div class="panel-content" style="min-height: 535px;">
+            	<input type="text" class="form-control input-style" id="treeSeacher-fun" />
+                <div class="tree" id="funTree">
+                	
+                </div>
+            </div>
+            <div class="modal-footer">
+            	<button type="button" class="btn" style="margin-bottom: 0px;" id="auth-reset">{$Think.lang.HOME_COMMON_RESET}</button>
+                <button type="button" class="btn bg-success" id="auth-save">{$Think.lang.HOME_COMMON_OK}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+//用户ID
+var __auth__userid__ = "";
+$(function(){
+	//添加菜单名
+	$("#authoritytab").find("li i").addClass(levelFirstFa);
+	$("#authoritytab").find("li a").html(levelFirst);
+	
+	//重置按钮绑定
+	$("#auth-reset").bind("click",function(){
+		if(__auth__userid__ == "")
+			return;
+		loadFunTree(__auth__userid__);
+	});
+	
+	//确定按钮绑定
+	$("#auth-save").bind("click",function(){
+		if(__auth__userid__ == "")
+			return;
+		var nodes = $("#funTree").jstree("get_checked");
+		var funcode = new Array();
+		var index = 0;
+		for(var i=0;i<nodes.length;i++){
+			var org = $("#funTree").jstree().get_node(nodes[i])["original"];
+			if(org["flag"] == "1"){
+				funcode[index] = org['id'];
+				index++;
+			}
+		}
+		if(funcode == ""){
+			toastr.warning("{$Think.lang.HOME_VIEW_MANAGE_AUTHORITYTAB_MSG1}");
+			return;
+		}else{
+			new PNotify({
+		        title: '{$Think.lang.HOME_COMMON_TIPS}',
+		        text: '{$Think.lang.HOME_VIEW_MANAGE_AUTHORITYTAB_MSG2}',
+		        type: 'custom',
+		        icon: "fa fa-user",
+		        hide: false,
+		        cornerclass: 'pnotify-sharp',
+		        confirm: {
+		            confirm: true
+		        },
+		        buttons: {
+		            closer: false,
+		            sticker: false
+		        },
+		        history: {
+		            history: true
+		        },
+		        addclass: 'stack-modal pnotify-primary',
+		        stack: {'dir1': 'down', 'dir2': 'right', 'modal': true}
+		    }).get().on('pnotify.confirm', function () {
+		    		$.post("{:U('Authoritytab/saveauth')}",{"data":funcode,"userid":__auth__userid__},function(json){
+						if(json.result == "1"){
+							toastr.success("{$Think.lang.HOME_COMMON_SAVEOK}");
+						}
+					},'json');
+		        });
+		}
+	});
+	
+	//加载用户树
+	loadUserTree();
+});
+
+//加载用户树
+function loadUserTree(){
+	$.post("{:U('Authoritytab/usertree')}",function(json){
+		$('#userTree').on('loaded.jstree', function(e, data){  
+		    var inst = data.instance;
+		    var obj = inst.get_node(e.target.firstChild.firstChild.lastChild.firstChild);  
+		    //alert(obj.id);//获取默认选中的ID
+		    inst.select_node(obj);
+		    __auth__userid__ = obj.id;
+		    loadFunTree(obj.id);
+		    
+		//绑定点击事件
+		}).jstree({
+			'core':{ 'data' : json},
+			plugins : ["sort","types","wholerow","search","unique"], 
+				"types" : { "file" : { "icon" : "fa fa-user" }}
+		
+		//监听加载完成后的事件
+		}).bind("activate_node.jstree", function (obj, e) {
+		    //当前节点数据
+		    var currentNode = e.node;
+		    if(currentNode.id == 0){
+		    	return;
+		    }else{
+		    	//alert(currentNode.id);
+		    	__auth__userid__ = currentNode.id;
+		    	loadFunTree(currentNode.id);
+		    }
+		});    
+		
+		//绑定搜索
+		var to = false;
+		$('#treeSeacher').keyup(function (){
+		    if(to){ clearTimeout(to); }
+		    to = setTimeout(function () {
+		      var v = $('#treeSeacher').val();
+		      $('#userTree').jstree(true).search(v);
+		    }, 250);
+		});
+	},'json');
+}
+
+//加载功能权限树
+function loadFunTree(userid){
+	$.post("{:U('Authoritytab/funtree')}",{'userid':userid},function(json){
+		//先销毁树
+		$('#funTree').jstree("destroy");
+		$('#funTree').on("loaded.jstree",function(e,data){
+			//console.log(json.userfun);
+			var checkId = json.userfun;
+			$("#funTree").find("li").each(function(){   
+	           	if(checkId instanceof Array){  
+	                for(var i=0;i<checkId.length;i++){  
+	                    if($(this).attr("id") == checkId[i]){  
+	                      $("#funTree").jstree("check_node",$(this));  
+	                    }  
+	                }  
+	            } 
+	     	});
+		}).jstree({
+			'core':{ 'data' : json.funtree, "cache":false  },
+			plugins : ["checkbox","sort","types","wholerow","search"], 
+				"types" : { "file" : { "icon" : "fa fa-wrench" }}
+		});
+		
+		//绑定搜索
+		var to = false;
+		$('#treeSeacher-fun').keyup(function (){
+		    if(to){ clearTimeout(to); }
+		    to = setTimeout(function () {
+		      var v = $('#treeSeacher-fun').val();
+		      $('#funTree').jstree(true).search(v);
+		    }, 250);
+		});
+	},'json');
+}
+</script>

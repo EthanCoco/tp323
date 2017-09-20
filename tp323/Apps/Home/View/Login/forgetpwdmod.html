@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en" class="fixed accounts lock-screen">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>忘记密码</title>
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="__HOMESTYLE__/Manage/stylesheets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/animate.css/animate.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.css">
+    <link rel="stylesheet" href="__HOMESTYLE__/Manage/stylesheets/css/style.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="page-body">
+        <div class="box animated fadeInUp">
+            <div class="panel">
+                <div class="panel-content bg-scale-0">
+                    <h3 class="text-center mb-md">设置密码</h3>
+                    <div class="form-group">
+                        <span class="input-with-icon">
+                            <input type="password" class="form-control" id="password0" placeholder="请输入密码">
+                            <i class="fa fa-key"></i>
+                        </span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="input-with-icon">
+                            <input type="password" class="form-control" id="password1" placeholder="请确认密码">
+                            <i style="color:#0000FF" class="fa fa-key"></i>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <p style="font-family: '微软雅黑';font-style: italic;color:#800000">请于10分钟内完成操作</p>
+                    </div>
+                    <div class="form-group">
+                        <a href="javascript:void(0);" onclick="modifyPwdSure()" class="btn btn-primary btn-block ">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__HOMESTYLE__/Manage/javascripts/jquery.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/nano-scroller/nano-scroller.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-script.min.js"></script>
+<script src="__HOMESTYLE__/Manage/javascripts/template-init.min.js"></script>
+<script src="__HOMESTYLE__/Manage/vendor/toastr/toastr.min.js"></script>
+<script src="__HOMESTYLE__/Manage/Jquery/md5.js"></script>
+<script src="__HOMESTYLE__/Manage/Share/share.js"></script>
+<script>
+
+function modifyPwdSure(){
+	var url = location.search;
+	var infos = new Object();
+	if(url.indexOf('?') != -1) {
+		var str = url.substr(1);
+		arr = str.split('&');
+		for (var i=0;i<arr.length;i++) {
+			infos[arr[i].split('=')[0]] = unescape(arr[i].split('=')[1]);
+		}
+	}
+	if(typeof infos.id === "undefined" || typeof infos.string === "undefined" || typeof infos.code === "undefined" || typeof infos.time === "undefined"){
+		toastr.error("非法请求");return;
+	}
+	
+	var pwd = $("#password0").val().trim();
+	var pwd2 = $("#password1").val().trim();
+	
+	if(pwd.length<7){
+		toastr.error('密码长度不能小于7位');
+		return;
+	}
+	
+	//判断密码格式是否正确
+	var validatePassWord = validatePwd(pwd);
+	if(validatePassWord == false){
+		toastr.error('密码格式不正确');
+		return;
+	}
+	
+	if(pwd != pwd2){
+		toastr.error('两次密码不一致');
+		return;
+	}
+	
+	var id = infos.id;
+	var string_string = infos.string;
+	var code = infos.code;
+	var time = infos.time;
+	
+	$.post("{:U('Login/forgetpwdsure')}",{'pwd':MD5(pwd),'id':id,'string':string_string,'code':code,'time':time},function(json){
+		if(!json.result){
+			toastr.error(json.msg);
+		}else{
+			toastr.success(json.msg);
+			setTimeout("funtime(3)",1000)
+		}
+	},'json');
+	
+	
+	
+}
+
+function funtime(n){
+    if(n>0){
+        n--;
+        setTimeout("funtime("+n+")",1000)
+    }      
+    document.location = "{:U('Login/forgetpwdmod')}";
+}
+</script>
+
+</body>
+</html>

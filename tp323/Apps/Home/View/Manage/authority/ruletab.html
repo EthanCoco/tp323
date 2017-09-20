@@ -1,0 +1,316 @@
+<!--
+	作者：lijl
+	时间：2017-09-05
+	描述：路由规则管理
+-->
+<div class="content-header">
+    <div class="leftside-content-header">
+        <ul class="breadcrumbs" id="ruletab">
+            <li><i class="" aria-hidden="true"></i><a href="#"></a></li>
+        </ul>
+    </div>
+</div>
+<div class="row animated fadeInUp">
+	<div class="panel">
+   		<table id="ruletab-grid" class="table table-hover">
+			
+		</table>
+	</div>
+	<div id="ruletab-bar" class="btn-group pull-right" style="margin-right: 20px;" title="{$Think.lang.HOME_COMMON_ADD}">
+		<if condition="$btnon eq 1">
+			<noempty name="$btnInfos">
+					<if condition="$btnInfos['add'] eq 1">
+					    <button id="ruletab_btn_add" type="button" class="btn btn-default">
+				         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+				     	</button>
+				   </if>
+		   </noempty>
+		<else />
+			<button id="ruletab_btn_add" type="button" class="btn btn-default">
+	         	<span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>
+	     	</button>
+		</if>
+	</div>
+</div>
+
+<!--添加规则 -->
+<div class="modal fade" id="ruletab-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">添加路由规则</h4>
+            </div>
+            <div class="modal-body">
+            	
+            	<div class="row">
+                    <div class="col-md-12">
+                        <form id="ruletab-form" class="form-horizontal form-stripe">
+                        	<div class="form-group">
+                            	<label for="funid" class="col-sm-3 control-label">挂载目录<span class="required">*</span></label>
+		                        <div class="col-sm-6">
+		                            <select title="挂载目录" r=1 class="form-control" name="funid" id="funid">
+									  	<option value="" selected="selected">请选择挂载目录</option>
+									  	<volist name="funInfo" id="vo"> 
+									  		<option value="{$vo.id}" >{$vo.title}</option>
+									  	</volist>
+									</select>          
+								</div>
+                           </div>
+                            <div class="form-group">
+                                <label for="title" class="col-sm-3 control-label">路由名称<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="路由名称" type="text" class="form-control" id="title" name="title" r=1 required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-3 control-label">路由地址<span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <input title="路由地址" type="text" class="form-control" id="name" name="name" r=1 req=1 validate="validateRule" reqt="路由规则填写错误" reqc="只能由“模块/控制器/操作”组成 " required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+	                            <label for="" class="col-sm-3 control-label">状态<span class="required">*</span></label>
+	                            <div class="col-sm-6">
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="启用" type="radio" id="status0" name="status" value="1">
+	                                    <label for="status0">启用</label>
+	                                </div>
+	                                <div class="radio radio-custom radio-inline radio-primary">
+	                                    <input title="停用" type="radio" id="status1" name="status" value="0">
+	                                    <label for="status1">停用</label>
+	                                </div>
+	                            </div>
+	                        </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$Think.lang.HOME_COMMON_CLOSE}</button>
+                <button type="button" class="btn btn-primary" onclick="saveLjltab()">{$Think.lang.HOME_COMMON_SAVE}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+var __btnon = '<?php echo $btnon; ?>';	
+var __btnInfos = '<?php echo json_encode($btnInfos); ?>';
+__btnInfos = __btnInfos != "" ? JSON.parse(__btnInfos) : "";
+var __editing_ruleid__ = "";
+$(function(){
+	//添加菜单名
+	$("#ruletab").find("li i").addClass(levelFirstFa);
+	$("#ruletab").find("li a").html(levelFirst);
+	
+	$("#ruletab_btn_add").bind('click',function(){
+		$('#ruletab-add').modal('show');
+		$("#ruletab-form").form("clear");
+		$("#status0").prop("checked",true);
+		$("#funid").val("");
+	});
+	
+	//初始化onblur事件
+	initBlurValidate("ruletab-form");
+	//加载路由规则列表
+	loadRuletab();
+});
+
+//加载路由规则列表
+function loadRuletab(){
+	$('#ruletab-grid').bootstrapTable("destroy");
+	$('#ruletab-grid').bootstrapTable({
+		contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Ruletab/listinfo')}",
+        queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        
+        detailView: true,//父子表
+        
+        height:600,//高度调整
+        
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pagination:true,//是否分页
+        pageSize:20,//单页记录数
+        pageList:[20,50,100],//分页步进值
+        
+        showRefresh:true,//刷新按钮
+        showColumns:true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign:'right',//工具栏对齐方式
+        buttonsAlign:'right',//按钮对齐方式
+        toolbar:'#ruletab-bar',//指定工作栏
+        
+	    singleSelect:true,
+	    columns:[[    
+			{field:'id',title:'父ID',valign:'middle',align:'center',visible:false} ,
+			{field:'title',title:'路由名称',valign:'middle',align:'left',sortable:false},
+			{field:'name',title:'路由地址',valign:'middle',align:'left',sortable:false},
+	        {field:'status',title:'状态',valign:'middle',align:'left',sortable:false,},
+	    ]],
+	    onExpandRow: function (index, row, $detail) {
+            buildSubTable(index, row, $detail);
+        }
+  });
+}
+function queryParams(params){
+    return{
+        page: params.limit,
+        //请求第几页
+        rows:params.offset,
+        order:params.order,
+        sort:params.sort,
+    }
+}
+
+function buildSubTable(index, row, $detail) {
+    var funid = row.id;
+    var cur_table = $detail.html('<table></table>').find('table');
+    $(cur_table).bootstrapTable({
+        contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+        method: 'post',
+        dataType:'json',
+        url:"{:U('Ruletab/listinfosub')}",
+        //queryParams:queryParams,//请求服务器时所传的参数
+        sidePagination:'server',//指定服务器端分页
+        queryParams: { "funid": funid},
+        clickToSelect: true,
+        detailView: false,//父子表
+        pagination:false,
+        //sortable: true,                     
+   		//sortOrder:'ASC',
+    	//sortName:'id',
+        columns:[[    
+			{field:'id',title:'子ID',valign:'middle',align:'center',visible:false} ,
+			{field:'title',title:'路由名称',valign:'middle',align:'center',sortable:false},
+			{field:'name',title:'路由地址',valign:'middle',align:'left',sortable:false},
+	        {field:'status',title:'状态',valign:'middle',align:'center',sortable:false,formatter: function(value,row,index){return value== "1" ? "{$Think.lang.HOME_COMMON_ENABLE}" : "{$Think.lang.HOME_COMMON_UNENABLE}"; }},
+	        {field:'operater',title:'操作',valign:'middle',align:'center',sortable:false,
+        		formatter: function(value,row,index){
+    				if(row.status == 1){
+    					var _html = "";
+    					if(__btnon == 1){
+    						if(__btnInfos!=""){
+    							if(__btnInfos.status == 1){
+    								_html+= '<a href="javascript:void(0);" title="禁用" onclick="ruletabEnabale('+row.id+',\''+row.title+'\',0)"><i class="fa fa-lock" aria-hidden="true"></i></a>';
+    							}
+    							if(__btnInfos.mod == 1){
+    								_html+= '<a href="javascript:void(0);" title="修改" onclick="ruletabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    							}
+    						}
+    					}else{
+    						_html =  '<a href="javascript:void(0);" title="禁用" onclick="ruletabEnabale('+row.id+',\''+row.title+'\',0)"><i class="fa fa-lock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="ruletabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    					}
+    					return _html;
+    				}else if(row.status == 0){
+    					var _html = "";
+    					if(__btnon == 1){
+    						if(__btnInfos!=""){
+    							if(__btnInfos.status == 1){
+    								_html+= '<a href="javascript:void(0);" title="启用" onclick="ruletabEnabale('+row.id+',\''+row.title+'\',1)"><i class="fa fa-unlock" aria-hidden="true"></i></a>';
+    							}
+    							if(__btnInfos.mod == 1){
+    								_html+= '<a href="javascript:void(0);" title="修改" onclick="ruletabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    							}
+    						}
+    					}else{
+    						_html =  '<a href="javascript:void(0);" title="启用" onclick="ruletabEnabale('+row.id+',\''+row.title+'\',1)"><i class="fa fa-unlock" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" title="修改" onclick="ruletabMod('+row.id+')"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+    					}
+    					return _html;
+    				}
+    			}
+	        },
+	    ]],
+    });
+};
+
+//保存用户
+function saveLjltab(){
+	//校验字段完整性
+	if(!validateForm("ruletab-form")){
+		return;
+	}
+	
+	//获取表单字段信息
+	var info = getFormData("ruletab-form");
+	//alert(JSON.stringify(info));
+	//提示动作
+	var stack_modal = {'dir1': 'down', 'dir2': 'right', 'modal': true};
+	new PNotify({
+        title: '{$Think.lang.HOME_COMMON_TIPS}',
+        text: '确定要保存么？',
+        type: 'custom',
+        icon: "fa fa-user",
+        hide: false,
+        cornerclass: 'pnotify-sharp',
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: true
+        },
+        addclass: 'stack-modal pnotify-primary',
+        stack: stack_modal
+    }).get().on('pnotify.confirm', function () {
+    		saveRuletab_sure(info);
+        });
+}
+//保存动作
+function saveRuletab_sure(info){
+	$.ajax({
+		type:"post",
+		url:"{:U('Ruletab/repairInfo')}",
+		async:true,
+		dataType:"json",
+		data:{data:info,'id':__editing_ruleid__},
+		success:function(json){
+			if(json["result"] == "1"){
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEOK}");
+				$('#ruletab-add').modal('hide');
+				//loadUsertab();
+				$('#ruletab-grid').bootstrapTable("refresh");
+			}else{
+				PNotifyMsg("{$Think.lang.HOME_COMMON_TIPS}","{$Think.lang.HOME_COMMON_SAVEERROR}")
+			}
+		}
+	});
+}
+
+function ruletabEnabale(id,title,type){
+	var msg = ['禁用','启用'];
+	Lwin.confirm({ message: "你确定要<span class='star'>"+msg[type]+"</span>【"+title+"】？",title:"{$Think.lang.HOME_COMMON_TIPS}",btnok:"{$Think.lang.HOME_COMMON_OK}",btncl:"{$Think.lang.HOME_COMMON_CANCLE}" }).on(function (e) {
+		if(!e) return;
+		$.post("{:U('Ruletab/changeStatus')}",{"id":id,'status':type},function(json){
+			if(json.result == "1"){
+				toastr.success("操作成功！");
+				$('#ruletab-grid').bootstrapTable("refresh");
+			}else{
+				toastr.error("操作成功！");
+			}
+		},'json');
+	});
+}
+
+function ruletabMod(id){
+	$('#ruletab-add').modal('show');
+	$("#ruletab-form").form("clear");
+	$.post("{:U('Ruletab/getRuleInfo')}",{"id":id},function(json){
+		var info = json.info;
+		$("#funid").val(info.funid);
+		$("#title").val(info.title);
+		var tempStatus = info.status == 1 ? 0 : 1;
+		$("#status"+tempStatus).prop("checked",true);
+		$("#name").val(info.name);
+		__editing_ruleid__ = info.id;
+	},'json');
+}
+</script>
