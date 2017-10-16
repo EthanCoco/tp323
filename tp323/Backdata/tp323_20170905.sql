@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2017-09-11 20:55:38
+Date: 2017-10-16 17:26:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3892,7 +3892,7 @@ CREATE TABLE `yy_auth_rule` (
   `funid` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of yy_auth_rule
@@ -3905,6 +3905,7 @@ INSERT INTO `yy_auth_rule` VALUES ('17', 'Home/Manage/ruletab', '路由规则管
 INSERT INTO `yy_auth_rule` VALUES ('18', 'Home/Manage/btntab', '按钮规则管理', '1', '', '1', '3');
 INSERT INTO `yy_auth_rule` VALUES ('19', 'Home/Manage/anthtab', '规则授权管理', '1', '', '1', '3');
 INSERT INTO `yy_auth_rule` VALUES ('21', 'Home/Manage/enginetab', '规则引擎', '1', '', '1', '4');
+INSERT INTO `yy_auth_rule` VALUES ('22', 'Home/Manage/smsgptab', '短信群发', '1', '', '1', '4');
 
 -- ----------------------------
 -- Table structure for yy_charuser
@@ -4136,7 +4137,7 @@ CREATE TABLE `yy_funchild` (
   `childrenurl` varchar(255) DEFAULT NULL COMMENT '节点路径',
   `childrennameen` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='二级功能栏目';
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='二级功能栏目';
 
 -- ----------------------------
 -- Records of yy_funchild
@@ -4148,6 +4149,7 @@ INSERT INTO `yy_funchild` VALUES ('22', '3', '909210010014', '路由规则管理
 INSERT INTO `yy_funchild` VALUES ('23', '3', '909210010014', '按钮规则管理', '90922002005', '1', '3', 'btntab', 'Button Rule Management');
 INSERT INTO `yy_funchild` VALUES ('24', '3', '909210010014', '规则授权管理', '90922002006', '1', '4', 'authtab', 'Access Rule Management');
 INSERT INTO `yy_funchild` VALUES ('25', '4', '909210010015', '规则引擎', '90922002080', '1', '1', 'enginetab', 'Rule Engine');
+INSERT INTO `yy_funchild` VALUES ('26', '4', '909210010015', '短信群发', '90922002081', '1', '2', 'smsgptab', 'Message Group Sending');
 
 -- ----------------------------
 -- Table structure for yy_function
@@ -4188,7 +4190,7 @@ CREATE TABLE `yy_log` (
   `ipaddr` varchar(255) DEFAULT NULL COMMENT 'ip地址',
   `contenten` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`logid`)
-) ENGINE=MyISAM AUTO_INCREMENT=167 DEFAULT CHARSET=utf8 COMMENT='日志表';
+) ENGINE=MyISAM AUTO_INCREMENT=196 DEFAULT CHARSET=utf8 COMMENT='日志表';
 
 -- ----------------------------
 -- Records of yy_log
@@ -4348,6 +4350,35 @@ INSERT INTO `yy_log` VALUES ('163', '2', '添加计算规则字段', '1', 'admin
 INSERT INTO `yy_log` VALUES ('164', '2', '添加计算规则字段', '1', 'admin', '2017-09-11 19:49:02', '127.0.0.1', 'Add Rule Parser Field');
 INSERT INTO `yy_log` VALUES ('165', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-11 19:54:17', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
 INSERT INTO `yy_log` VALUES ('166', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-11 19:54:50', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
+INSERT INTO `yy_log` VALUES ('167', '1', '登录', '1', 'admin', '2017-09-12 08:23:14', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('168', '4', '修改计算规则字段ID=2', '1', 'admin', '2017-09-12 08:39:44', '127.0.0.1', 'Modify Rule Parser Field for ID=2');
+INSERT INTO `yy_log` VALUES ('169', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-12 08:41:05', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
+INSERT INTO `yy_log` VALUES ('170', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-12 09:00:06', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
+INSERT INTO `yy_log` VALUES ('171', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-12 09:04:31', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
+INSERT INTO `yy_log` VALUES ('172', '4', '修改计算规则字段ID=2', '1', 'admin', '2017-09-12 09:08:36', '127.0.0.1', 'Modify Rule Parser Field for ID=2');
+INSERT INTO `yy_log` VALUES ('173', '4', '修改计算规则字段ID=1', '1', 'admin', '2017-09-12 09:10:50', '127.0.0.1', 'Modify Rule Parser Field for ID=1');
+INSERT INTO `yy_log` VALUES ('174', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:35:13', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('175', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:35:37', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('176', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:36:05', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('177', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:36:38', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('178', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:36:55', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('179', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:37:09', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('180', '4', '修改计算规则字段ID=4', '1', 'admin', '2017-09-12 09:39:12', '127.0.0.1', 'Modify Rule Parser Field for ID=4');
+INSERT INTO `yy_log` VALUES ('181', '4', '修改规则模板ID=1状态', '1', 'admin', '2017-09-12 09:51:06', '127.0.0.1', 'Modify Rule Model Status ID=1');
+INSERT INTO `yy_log` VALUES ('182', '4', '修改规则模板ID=1状态', '1', 'admin', '2017-09-12 09:51:09', '127.0.0.1', 'Modify Rule Model Status ID=1');
+INSERT INTO `yy_log` VALUES ('183', '1', '登录', '1', 'admin', '2017-09-12 14:06:01', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('184', '1', '登录', '1', 'admin', '2017-09-13 08:54:05', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('185', '4', '修改密码', '0', '', '2017-09-13 10:24:37', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('186', '4', '修改密码', '0', '', '2017-09-13 13:34:52', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('187', '4', '修改密码', '0', '', '2017-09-13 13:42:28', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('188', '4', '修改密码', '0', '', '2017-09-13 13:44:13', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('189', '1', '登录', '29', 'ethan', '2017-09-13 13:44:33', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('190', '4', '修改密码', '0', '', '2017-09-13 13:46:44', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('191', '4', '修改密码', '0', '', '2017-09-13 13:47:33', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('192', '4', '修改密码', '0', '', '2017-09-13 13:52:22', '127.0.0.1', 'modify Password');
+INSERT INTO `yy_log` VALUES ('193', '1', '登录', '1', 'admin', '2017-09-13 13:54:17', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('194', '1', '登录', '1', 'admin', '2017-09-18 16:40:58', '127.0.0.1', 'Login');
+INSERT INTO `yy_log` VALUES ('195', '1', '登录', '1', 'admin', '2017-10-16 17:15:01', '127.0.0.1', 'Login');
 
 -- ----------------------------
 -- Table structure for yy_rule_field
@@ -4403,10 +4434,10 @@ CREATE TABLE `yy_rule_parser` (
 -- ----------------------------
 -- Records of yy_rule_parser
 -- ----------------------------
-INSERT INTO `yy_rule_parser` VALUES ('1', '1', '[&amp;quot;&amp;lt;=&amp;quot;,&amp;quot;sm_redit&amp;quot;,500]', 'bankrate', '[&amp;quot;+&amp;quot;,0,0.2]', '1');
+INSERT INTO `yy_rule_parser` VALUES ('1', '1', '[&quot;&lt;=&quot;,&quot;sm_redit&quot;,500]', 'bankrate', '[&quot;+&quot;,0,0.2]', '1');
 INSERT INTO `yy_rule_parser` VALUES ('2', '1', '[\">\",\"sm_redit\",500]', 'bankrate', '[\"+\",0,0.15]', '2');
 INSERT INTO `yy_rule_parser` VALUES ('3', '1', '', 'hetongjia', '[\"*\",loancach, [\"+\",1,bankrate]]', '3');
-INSERT INTO `yy_rule_parser` VALUES ('4', '1', '', 'yuehuan', '[\"/\",hetongjia,loanage]', '4');
+INSERT INTO `yy_rule_parser` VALUES ('4', '1', '', 'yuehuan', '[&quot;/&quot;,hetongjia,loanage]', '4');
 
 -- ----------------------------
 -- Table structure for yy_test
