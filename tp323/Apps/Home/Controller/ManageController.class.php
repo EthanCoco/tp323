@@ -223,5 +223,9 @@ class ManageController extends PrivateController {
 		$this->display('Manage/technical/enginetab');
 	}
 	
+	//短信群发
+	public function smsgptab(){
+		$this->display('Manage/technical/smsgptab');
+	}
 	
 }
