@@ -228,4 +228,9 @@ class ManageController extends PrivateController {
 		$this->display('Manage/technical/smsgptab');
 	}
 	
+	/*****************学习相关******************/
+	//MongoDB 数据库学习
+	public function mongotab(){
+		$this->display('Manage/study/mongotab');
+	}
 }
