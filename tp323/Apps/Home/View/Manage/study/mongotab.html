@@ -10,7 +10,18 @@ $(function(){
 	//添加菜单名
 	$("#mongotab").find("li i").addClass(levelFirstFa);
 	$("#mongotab").find("li a").html(levelFirst);
-	
+	init_mongo_page();
 });
+
+function init_mongo_page(){
+	$.ajax({
+		type:"post",
+		url:"{:U('Mongotab/index')}",
+		async:true,
+		success:function(json){
+			
+		}
+	});	
+}
 
 </script>
