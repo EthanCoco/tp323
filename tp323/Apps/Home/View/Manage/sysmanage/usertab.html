@@ -364,12 +364,19 @@ function queryParams(params){
 			searchObj[$(this).attr("name")] = $(this).val().trim();
 		}
 	});
+	alert(JSON.stringify(params));
     return{
-        page: params.limit,
+        page:(params.offset/params.limit)+1,
         //请求第几页
-        rows:params.offset,
+        rows:params.limit,
         order:params.order,
         sort:params.sort,
+//      rows: params.pageSize,
+//          page: params.pageNumber,
+//			order: params.sortOrder,
+//          sort: params.sortName,
+        
+        
         data:searchObj,
     }
 }
